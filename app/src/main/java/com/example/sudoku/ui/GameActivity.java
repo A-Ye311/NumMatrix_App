@@ -55,8 +55,6 @@ public class GameActivity extends Activity {
         updateMistakes();
 
         // ✅ 3) Zellen dynamisch ins GridLayout einfügen
-        int size = (int) (getResources().getDisplayMetrics().widthPixels / 9.5);
-
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
 
@@ -72,14 +70,6 @@ public class GameActivity extends Activity {
                         GridLayout.spec(r),
                         GridLayout.spec(c)
                 );
-                params.width = size;
-                params.height = size;
-
-        // ✅ Abstände (und 3x3 Block-Trennung)
-                params.setMargins(1, 1, 1, 1);
-                if (r % 3 == 0) params.topMargin = 6;
-                if (c % 3 == 0) params.leftMargin = 6;
-
                 cell.setLayoutParams(params);
 
 
@@ -130,12 +120,44 @@ public class GameActivity extends Activity {
                 grid.addView(cell);
             }
         }
+        grid.post(() -> applyGridSizing(grid));
     }
 
     private void updateMistakes() {
         if (mistakesView != null) {
             mistakesView.setText("Fehler: " + game.getMistakes() + " / 3");
         }
+    }
+    private void applyGridSizing(GridLayout grid) {
+        int thin = dpToPx(1);
+        int thick = dpToPx(4);
+
+        int availableWidth = grid.getWidth() - grid.getPaddingLeft() - grid.getPaddingRight();
+        int totalHorizontalMargins = (4 * thick) + (14 * thin);
+        int cellSize = (availableWidth - totalHorizontalMargins) / 9;
+
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                EditText cell = cells[r][c];
+                GridLayout.LayoutParams params = (GridLayout.LayoutParams) cell.getLayoutParams();
+                params.width = cellSize;
+                params.height = cellSize;
+
+                int left = (c % 3 == 0) ? thick : thin;
+                int top = (r % 3 == 0) ? thick : thin;
+                int right = thin;
+                int bottom = thin;
+                if (c == 8) right = thick;
+                if (r == 8) bottom = thick;
+                params.setMargins(left, top, right, bottom);
+                cell.setLayoutParams(params);
+            }
+        }
+    }
+
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     private void onGameEnd(boolean win) {
