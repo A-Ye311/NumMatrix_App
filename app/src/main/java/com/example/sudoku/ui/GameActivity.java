@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -25,7 +27,10 @@ public class GameActivity extends Activity {
     private SudokuGame game;
     private final EditText[][] cells = new EditText[9][9];
     private TextView mistakesView;
-
+    private TextView timerView;
+    private final Handler timerHandler = new Handler(Looper.getMainLooper());
+    private long startTimeMs;
+    private boolean timerRunning;
     private String difficulty;
     private StatsManager stats;
     private AuthManager auth;
@@ -49,10 +54,12 @@ public class GameActivity extends Activity {
         // ✅ 2) Views aus XML holen
         TextView diffView = findViewById(R.id.tvDifficulty);
         mistakesView = findViewById(R.id.tvMistakes);
+        timerView = findViewById(R.id.tvTimer);
         GridLayout grid = findViewById(R.id.sudokuGrid);
 
         diffView.setText("Schwierigkeit: " + difficulty);
         updateMistakes();
+        startTimer();
 
         // ✅ 3) Zellen dynamisch ins GridLayout einfügen
         for (int r = 0; r < 9; r++) {
@@ -128,6 +135,7 @@ public class GameActivity extends Activity {
             mistakesView.setText("Fehler: " + game.getMistakes() + " / 3");
         }
     }
+
     private void applyGridSizing(GridLayout grid) {
         int thin = dpToPx(1);
         int thick = dpToPx(4);
@@ -154,6 +162,38 @@ public class GameActivity extends Activity {
             }
         }
     }
+    private void startTimer() {
+        startTimeMs = System.currentTimeMillis();
+        timerRunning = true;
+        timerHandler.post(timerTick);
+    }
+
+    private void stopTimer() {
+        timerRunning = false;
+        timerHandler.removeCallbacks(timerTick);
+    }
+
+    private int elapsedSeconds() {
+        long elapsedMs = System.currentTimeMillis() - startTimeMs;
+        return (int) (elapsedMs / 1000);
+    }
+
+    private void updateTimerText() {
+        if (timerView == null) return;
+        int totalSeconds = elapsedSeconds();
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        timerView.setText(String.format("Zeit: %02d:%02d", minutes, seconds));
+    }
+
+    private final Runnable timerTick = new Runnable() {
+        @Override
+        public void run() {
+            if (!timerRunning) return;
+            updateTimerText();
+            timerHandler.postDelayed(this, 1000);
+        }
+    };
 
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
@@ -161,8 +201,9 @@ public class GameActivity extends Activity {
     }
 
     private void onGameEnd(boolean win) {
+        stopTimer();
         String email = auth.currentUserEmail();
-        if (email != null) stats.recordGame(email, difficulty, win);
+        if (email != null) stats.recordGame(email, difficulty, win, elapsedSeconds());
 
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(win ? "Spiel gewonnen" : "Spiel vorbei");
@@ -180,5 +221,10 @@ public class GameActivity extends Activity {
 
         b.setCancelable(false);
         b.show();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopTimer();
     }
 }

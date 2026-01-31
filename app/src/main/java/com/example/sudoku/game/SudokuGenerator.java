@@ -1,5 +1,8 @@
 package com.example.sudoku.game;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 public class SudokuGenerator {
 
     public static class Puzzle {
@@ -27,20 +30,11 @@ public class SudokuGenerator {
 
         int[][] pz = deepCopy(sol);
 
-        int remove = 35;
-        if ("MITTEL".equals(difficulty)) remove = 45;
-        if ("SCHWER".equals(difficulty)) remove = 55;
+        int remove = 30;
+        if ("MITTEL".equals(difficulty)) remove = 40;
+        if ("SCHWER".equals(difficulty)) remove = 50;
 
-        int count = 0;
-        outer:
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                if (count >= remove) break outer;
-                pz[r][c] = 0;
-                count++;
-            }
-        }
-
+        removeCellsEvenly(pz, remove);
         return new Puzzle(pz, sol);
     }
 
@@ -50,5 +44,41 @@ public class SudokuGenerator {
             System.arraycopy(src[r], 0, out[r], 0, 9);
         }
         return out;
+    }
+    private void removeCellsEvenly(int[][] puzzle, int remove) {
+        List<int[]>[] byBox = new ArrayList[9];
+        for (int i = 0; i < 9; i++) {
+            byBox[i] = new ArrayList<>();
+        }
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                int box = (r / 3) * 3 + (c / 3);
+                byBox[box].add(new int[]{r, c});
+            }
+        }
+
+        Random random = new Random();
+        for (List<int[]> boxCells : byBox) {
+            Collections.shuffle(boxCells, random);
+        }
+
+        int removed = 0;
+        while (removed < remove) {
+            boolean removedThisRound = false;
+            for (List<int[]> boxCells : byBox) {
+                if (removed >= remove) {
+                    break;
+                }
+                if (!boxCells.isEmpty()) {
+                    int[] cell = boxCells.remove(boxCells.size() - 1);
+                    puzzle[cell[0]][cell[1]] = 0;
+                    removed++;
+                    removedThisRound = true;
+                }
+            }
+            if (!removedThisRound) {
+                break;
+            }
+        }
     }
 }
