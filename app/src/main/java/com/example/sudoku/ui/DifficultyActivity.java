@@ -4,31 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import com.example.sudoku.R;
 
 public class DifficultyActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-
-        root.addView(makeBtn("EINFACH"));
-        root.addView(makeBtn("MITTEL"));
-        root.addView(makeBtn("SCHWER"));
-
-        setContentView(root);
+        setContentView(R.layout.activity_difficulty);
+        Button easy = findViewById(R.id.btnEasy);
+        Button medium = findViewById(R.id.btnMedium);
+        Button hard = findViewById(R.id.btnHard);
+        easy.setOnClickListener(v -> startGame("EINFACH"));
+        medium.setOnClickListener(v -> startGame("MITTEL"));
+        hard.setOnClickListener(v -> startGame("SCHWER"));
     }
 
-    private Button makeBtn(String diff) {
-        Button b = new Button(this);
-        b.setText(diff);
-        b.setOnClickListener(v -> {
-            Intent i = new Intent(this, GameActivity.class);
-            i.putExtra("difficulty", diff);
-            startActivity(i);
-            finish();
-        });
-        return b;
+    private void startGame(String difficulty) {
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("difficulty", difficulty);
+        startActivity(intent);
+        finish();
     }
 }

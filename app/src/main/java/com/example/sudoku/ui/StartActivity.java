@@ -27,18 +27,15 @@ public class StartActivity extends Activity {
         findViewById(R.id.btnRegister).setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterActivity.class)));
 
-        TextView loggedInInfo = findViewById(R.id.tvLoggedInInfo);
-        Button continueButton = findViewById(R.id.btnContinue);
-        String email = auth.currentUserEmail();
-        if (email != null) {
-            loggedInInfo.setText("Eingeloggt als: " + email);
-            loggedInInfo.setVisibility(View.VISIBLE);
-            continueButton.setVisibility(View.VISIBLE);
-            continueButton.setOnClickListener(v ->
-                    startActivity(new Intent(this, MainMenuActivity.class)));
-        } else {
-            loggedInInfo.setVisibility(View.GONE);
-            continueButton.setVisibility(View.GONE);
-        }
+        // Buttons aus XML
+        findViewById(R.id.btnContinue).setOnClickListener(v ->
+                startActivity(new Intent(this, MainMenuActivity.class)));
+
+        findViewById(R.id.btnLogin).setOnClickListener(v ->
+                startActivity(new Intent(this, LoginActivity.class)));
+
+        findViewById(R.id.btnRegister).setOnClickListener(v ->
+                startActivity(new Intent(this, RegisterActivity.class)));
+
     }
 }

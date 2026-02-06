@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import com.example.sudoku.R;
 
 import com.example.sudoku.auth.AuthManager;
 
@@ -14,11 +14,9 @@ public class SettingsActivity extends Activity {
 
         AuthManager auth = new AuthManager(this);
 
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
+        setContentView(R.layout.activity_settings);
 
-        Button logout = new Button(this);
-        logout.setText("ABMELDEN");
+        Button logout = findViewById(R.id.btnLogout);
         logout.setOnClickListener(v -> {
             auth.logout();
             Intent i = new Intent(this, StartActivity.class);
@@ -26,8 +24,5 @@ public class SettingsActivity extends Activity {
             startActivity(i);
             finish();
         });
-
-        root.addView(logout);
-        setContentView(root);
     }
 }

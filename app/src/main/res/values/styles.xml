@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Sudoku.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/sudoku_purple</item>
+        <item name="android:textColor">@color/sudoku_on_purple</item>
+        <item name="cornerRadius">28dp</item>
+    </style>
+</resources>

@@ -4,30 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import com.example.sudoku.R;
 
 public class MainMenuActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
+        setContentView(R.layout.activity_main_menu);
 
-        Button start = new Button(this);
-        start.setText("SPIEL STARTEN");
+        Button start = findViewById(R.id.btnStartGame);
+        Button stats = findViewById(R.id.btnStats);
+        Button settings = findViewById(R.id.btnSettings);
         start.setOnClickListener(v -> startActivity(new Intent(this, DifficultyActivity.class)));
-
-        Button stats = new Button(this);
-        stats.setText("STATISTIK");
         stats.setOnClickListener(v -> startActivity(new Intent(this, StatisticsActivity.class)));
-
-        Button settings = new Button(this);
-        settings.setText("EINSTELLUNG");
         settings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
-
-        root.addView(start);
-        root.addView(stats);
-        root.addView(settings);
-        setContentView(root);
     }
 }
