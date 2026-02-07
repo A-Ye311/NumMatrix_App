@@ -28,7 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         style="@style/Widget.Sudoku.Button"
-        android:text="WEITER" />
+        android:text="WEITER"
+        android:visibility="gone" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"

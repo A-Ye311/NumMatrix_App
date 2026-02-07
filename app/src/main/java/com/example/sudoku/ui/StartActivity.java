@@ -16,26 +16,41 @@ public class StartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AuthManager auth = new AuthManager(this);
         // XML laden
         setContentView(R.layout.activity_start);
 
         // Buttons aus XML
-        findViewById(R.id.btnLogin).setOnClickListener(v ->
-                startActivity(new Intent(this, LoginActivity.class)));
+        TextView loggedInInfo = findViewById(R.id.tvLoggedInInfo);
+        Button btnContinue = findViewById(R.id.btnContinue);
+        Button btnLogin = findViewById(R.id.btnLogin);
+        Button btnRegister = findViewById(R.id.btnRegister);
 
-        findViewById(R.id.btnRegister).setOnClickListener(v ->
+        btnLogin.setOnClickListener(v ->
+                startActivity(new Intent(this, LoginActivity.class)));
+        btnRegister.setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterActivity.class)));
 
-        // Buttons aus XML
-        findViewById(R.id.btnContinue).setOnClickListener(v ->
-                startActivity(new Intent(this, MainMenuActivity.class)));
+        updateLoginState(loggedInInfo, btnContinue);
+    }
 
-        findViewById(R.id.btnLogin).setOnClickListener(v ->
-                startActivity(new Intent(this, LoginActivity.class)));
-
-        findViewById(R.id.btnRegister).setOnClickListener(v ->
-                startActivity(new Intent(this, RegisterActivity.class)));
-
+        @Override
+        protected void onResume() {
+            super.onResume();
+            updateLoginState(findViewById(R.id.tvLoggedInInfo),
+                    findViewById(R.id.btnContinue));
+        }
+        private void updateLoginState(TextView loggedInInfo, Button btnContinue) {
+            AuthManager auth = new AuthManager(this);
+            String email = auth.currentUserEmail();
+            if (email != null) {
+                loggedInInfo.setText("Eingeloggt als: " + email);
+                loggedInInfo.setVisibility(View.VISIBLE);
+                btnContinue.setVisibility(View.VISIBLE);
+                btnContinue.setOnClickListener(v ->
+                        startActivity(new Intent(this, MainMenuActivity.class)));
+            } else {
+                loggedInInfo.setVisibility(View.GONE);
+                btnContinue.setVisibility(View.GONE);
+            }
     }
 }
