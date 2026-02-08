@@ -15,10 +15,15 @@ public class StatisticsActivity extends Activity {
         setContentView(R.layout.activity_statistics);
 
         AuthManager auth = new AuthManager(this);
-        StatsManager stats = new StatsManager(this);
+        StatsManager stats = new StatsManager();
 
         String email = auth.currentUserEmail();
         TextView tv = findViewById(R.id.tvStats);
-        tv.setText(email == null ? "Nicht eingeloggt." : stats.getSummary(email));
+        if (email == null) {
+            tv.setText("Nicht eingeloggt.");
+        } else {
+            tv.setText("Lade Statistik...");
+            stats.getSummary(email, tv::setText);
+        }
     }
 }

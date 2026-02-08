@@ -1,32 +1,23 @@
 package com.example.sudoku.stats;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StatsManager {
-    private static final String PREF = "sudoku_stats";
-    private static final String KEY = "stats_json";
-
-    private final SharedPreferences sp;
-
-    public StatsManager(Context ctx) {
-        sp = ctx.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+    public interface SummaryCallback {
+        void onSummary(String summary);
     }
 
-    private JSONObject load() {
-        try { return new JSONObject(sp.getString(KEY, "{}")); }
-        catch (JSONException e) { return new JSONObject(); }
-    }
+    private static final String COLLECTION = "statistik";
+    private final FirebaseFirestore firestore;
 
-    private void save(JSONObject obj) {
-        sp.edit().putString(KEY, obj.toString()).apply();
-    }
-
-    private String userKey(String email, String difficulty) {
-        return email + "::" + difficulty;
+    public StatsManager() {
+        firestore = FirebaseFirestore.getInstance();
     }
 
     public void recordGame(String email, String difficulty, boolean win) {
@@ -34,52 +25,86 @@ public class StatsManager {
     }
 
     public void recordGame(String email, String difficulty, boolean win, int seconds) {
-        JSONObject obj = load();
-        String k = userKey(email, difficulty);
-        try {
-            JSONObject entry = obj.has(k) ? obj.getJSONObject(k) : new JSONObject();
-            int played = entry.optInt("played", 0);
-            int wins = entry.optInt("wins", 0);
-            int totalSeconds = entry.optInt("totalSeconds", 0);
-            int bestSeconds = entry.optInt("bestSeconds", 0);
-            entry.put("played", played + 1);
-            entry.put("wins", win ? (wins + 1) : wins);
+        DocumentReference ref = firestore.collection(COLLECTION)
+                .document(email)
+                .collection("stats")
+                .document(difficulty);
+
+        firestore.runTransaction(transaction -> {
+            DocumentSnapshot snapshot = transaction.get(ref);
+            long played = getLong(snapshot, "played");
+            long wins = getLong(snapshot, "wins");
+            long totalSeconds = getLong(snapshot, "totalSeconds");
+            long bestSeconds = getLong(snapshot, "bestSeconds");
+
+            long newPlayed = played + 1;
+            long newWins = win ? (wins + 1) : wins;
+            long newTotalSeconds = totalSeconds;
+            long newBestSeconds = bestSeconds;
+
             if (seconds > 0) {
-                entry.put("totalSeconds", totalSeconds + seconds);
+                newTotalSeconds = totalSeconds + seconds;
                 if (bestSeconds == 0 || seconds < bestSeconds) {
-                    entry.put("bestSeconds", seconds);
-                } else {
-                    entry.put("bestSeconds", bestSeconds);
+                    newBestSeconds = seconds;
                 }
             }
-            obj.put(k, entry);
-            save(obj);
-        } catch (JSONException ignored) {}
+
+            long avgSeconds = newPlayed > 0 && newTotalSeconds > 0 ? newTotalSeconds / newPlayed : 0;
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("played", newPlayed);
+            payload.put("wins", newWins);
+            payload.put("totalSeconds", newTotalSeconds);
+            payload.put("bestSeconds", newBestSeconds);
+            payload.put("avgTime", avgSeconds);
+            payload.put("bestTime", newBestSeconds);
+            transaction.set(ref, payload, SetOptions.merge());
+            return null;
+        });
     }
 
-    public String getSummary(String email) {
-        JSONObject obj = load();
-        StringBuilder sb = new StringBuilder();
-        String[] diffs = {"EINFACH", "MITTEL", "SCHWER"};
-
-        for (String d : diffs) {
-            String k = userKey(email, d);
-            JSONObject entry = obj.optJSONObject(k);
-            int played = entry != null ? entry.optInt("played", 0) : 0;
-            int wins = entry != null ? entry.optInt("wins", 0) : 0;
-            int totalSeconds = entry != null ? entry.optInt("totalSeconds", 0) : 0;
-            int bestSeconds = entry != null ? entry.optInt("bestSeconds", 0) : 0;
-            String avgTime = played > 0 && totalSeconds > 0 ? formatTime(totalSeconds / played) : "--:--";
-            String bestTime = bestSeconds > 0 ? formatTime(bestSeconds) : "--:--";
-            sb.append(d)
-                    .append(": gespielt ").append(played)
-                    .append(", gewonnen ").append(wins)
-                    .append(", Ø Zeit ").append(avgTime)
-                    .append(", Bestzeit ").append(bestTime)
-                    .append("\n");
-            }
-            return sb.toString();
+    public void getSummary(String email, SummaryCallback cb) {
+        firestore.collection(COLLECTION)
+                .document(email)
+                .collection("stats")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    Map<String, DocumentSnapshot> docs = new HashMap<>();
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        docs.put(doc.getId(), doc);
+                    }
+                    String[] diffs = {"EINFACH", "MITTEL", "SCHWER"};
+                    StringBuilder sb = new StringBuilder();
+                    for (String d : diffs) {
+                        DocumentSnapshot doc = docs.get(d);
+                        long played = getLong(doc, "played");
+                        long wins = getLong(doc, "wins");
+                        long totalSeconds = getLong(doc, "totalSeconds");
+                        long bestSeconds = getLong(doc, "bestSeconds");
+                        long avgSeconds = getLong(doc, "avgTime");
+                        if (avgSeconds == 0 && played > 0 && totalSeconds > 0) {
+                            avgSeconds = totalSeconds / played;
+                        }
+                        String avgTime = avgSeconds > 0 ? formatTime((int) avgSeconds) : "--:--";
+                        String bestTime = bestSeconds > 0 ? formatTime((int) bestSeconds) : "--:--";
+                        sb.append(d)
+                                .append(": gespielt ").append(played)
+                                .append(", gewonnen ").append(wins)
+                                .append(", Ø Zeit ").append(avgTime)
+                                .append(", Bestzeit ").append(bestTime)
+                                .append("\n");
+                    }
+                    cb.onSummary(sb.toString());
+                })
+                .addOnFailureListener(e -> cb.onSummary("Fehler beim Laden der Statistik."));
     }
+
+    private long getLong(DocumentSnapshot doc, String key) {
+        if (doc == null) return 0;
+        Long value = doc.getLong(key);
+        return value != null ? value : 0;
+    }
+
     private String formatTime(int seconds) {
         int minutes = seconds / 60;
         int secs = seconds % 60;

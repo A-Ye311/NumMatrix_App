@@ -28,18 +28,19 @@ public class RegisterActivity extends Activity {
 
         // ✅ Register-Button
         findViewById(R.id.btnDoRegister).setOnClickListener(v -> {
-            AuthManager.Result r = auth.register(
+            auth.register(
                     email.getText().toString().trim(),
                     pw.getText().toString(),
-                    pw2.getText().toString()
+                    pw2.getText().toString(),
+                    r -> {
+                        if (!r.ok) {
+                            error.setText(r.message);
+                        } else {
+                            startActivity(new Intent(this, MainMenuActivity.class));
+                            finish();
+                        }
+                    }
             );
-
-            if (!r.ok) {
-                error.setText(r.message);
-            } else {
-                startActivity(new Intent(this, MainMenuActivity.class));
-                finish();
-            }
         });
     }
 }

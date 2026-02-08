@@ -43,7 +43,7 @@ public class GameActivity extends Activity {
         if (difficulty == null) difficulty = "EINFACH";
 
         auth = new AuthManager(this);
-        stats = new StatsManager(this);
+        stats = new StatsManager();
 
         SudokuGenerator gen = new SudokuGenerator();
         game = new SudokuGame(gen.generate(difficulty));

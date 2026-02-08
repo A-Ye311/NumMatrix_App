@@ -27,17 +27,18 @@ public class LoginActivity extends Activity {
 
         // 3) Button-Logik
         findViewById(R.id.btnDoLogin).setOnClickListener(v -> {
-            AuthManager.Result r = auth.login(
+            auth.login(
                     email.getText().toString().trim(),
-                    pw.getText().toString()
+                    pw.getText().toString(),
+                    r -> {
+                        if (!r.ok) {
+                            error.setText(r.message);
+                        } else {
+                            startActivity(new Intent(this, MainMenuActivity.class));
+                            finish();
+                        }
+                    }
             );
-
-            if (!r.ok) {
-                error.setText(r.message);
-            } else {
-                startActivity(new Intent(this, MainMenuActivity.class));
-                finish();
-            }
         });
 
         findViewById(R.id.btnReset).setOnClickListener(v ->
