@@ -5,16 +5,21 @@ import android.content.SharedPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserStore {
     private static final String PREF = "sudoku_users";
     private static final String KEY_USERS = "users_json";
     private static final String KEY_LOGGED_IN = "logged_in_email";
-
+    private final FirebaseFirestore firestore;
     private final SharedPreferences sp;
 
     public UserStore(Context ctx) {
         sp = ctx.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        firestore = FirebaseFirestore.getInstance();
     }
 
     private JSONObject loadUsers() {
@@ -26,10 +31,13 @@ public class UserStore {
     private void saveUsers(JSONObject obj) {
         sp.edit().putString(KEY_USERS, obj.toString()).apply();
     }
-
-    public boolean userExists(String email) {
-        JSONObject users = loadUsers();
-        return users.has(email);
+    private void syncUser(String email, String password) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("email", email);
+        payload.put("password", password);
+        firestore.collection("users")
+                .document(email)
+                .set(payload, SetOptions.merge());
     }
 
     public boolean register(String email, String password) {
@@ -38,6 +46,7 @@ public class UserStore {
         try {
             users.put(email, password); // super simpel (für Uni-Projekt ok)
             saveUsers(users);
+            syncUser(email, password);
             return true;
         } catch (JSONException e) {
             return false;
@@ -60,6 +69,7 @@ public class UserStore {
         try {
             users.put(email, newPassword);
             saveUsers(users);
+            syncUser(email, newPassword);
             return true;
         } catch (JSONException e) {
             return false;
@@ -67,11 +77,20 @@ public class UserStore {
     }
 
     public void setLoggedIn(String email) {
-        sp.edit().putString(KEY_LOGGED_IN, email).apply();
+        if (email == null || email.trim().isEmpty()) {
+            logout();
+            return;
+        }
+        sp.edit().putString(KEY_LOGGED_IN, email.trim()).apply();
     }
 
     public String getLoggedInEmail() {
-        return sp.getString(KEY_LOGGED_IN, null);
+        String email = sp.getString(KEY_LOGGED_IN, null);
+        if (email == null || email.trim().isEmpty()) {
+            return null;
+        }
+        JSONObject users = loadUsers();
+        return users.has(email) ? email : null;
     }
 
     public void logout() {

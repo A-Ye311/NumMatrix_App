@@ -4,16 +4,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONObject;import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;import java.util.HashMap;
+import java.util.Map;
 
 public class StatsManager {
     private static final String PREF = "sudoku_stats";
     private static final String KEY = "stats_json";
-
+    private final FirebaseFirestore firestore;
     private final SharedPreferences sp;
 
     public StatsManager(Context ctx) {
         sp = ctx.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        firestore = FirebaseFirestore.getInstance();
     }
 
     private JSONObject load() {
@@ -24,7 +27,18 @@ public class StatsManager {
     private void save(JSONObject obj) {
         sp.edit().putString(KEY, obj.toString()).apply();
     }
-
+    private void syncStats(String email, String difficulty, JSONObject entry) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("played", entry.optInt("played", 0));
+        payload.put("wins", entry.optInt("wins", 0));
+        payload.put("totalSeconds", entry.optInt("totalSeconds", 0));
+        payload.put("bestSeconds", entry.optInt("bestSeconds", 0));
+        firestore.collection("users")
+                .document(email)
+                .collection("stats")
+                .document(difficulty)
+                .set(payload, SetOptions.merge());
+    }
     private String userKey(String email, String difficulty) {
         return email + "::" + difficulty;
     }
@@ -32,7 +46,7 @@ public class StatsManager {
     public void recordGame(String email, String difficulty, boolean win) {
         recordGame(email, difficulty, win, 0);
     }
-
+    @SuppressWarnings("unused")
     public void recordGame(String email, String difficulty, boolean win, int seconds) {
         JSONObject obj = load();
         String k = userKey(email, difficulty);
@@ -54,9 +68,9 @@ public class StatsManager {
             }
             obj.put(k, entry);
             save(obj);
+            syncStats(email, difficulty, entry);
         } catch (JSONException ignored) {}
     }
-
     public String getSummary(String email) {
         JSONObject obj = load();
         StringBuilder sb = new StringBuilder();
@@ -83,6 +97,6 @@ public class StatsManager {
     private String formatTime(int seconds) {
         int minutes = seconds / 60;
         int secs = seconds % 60;
-        return String.format("%02d:%02d", minutes, secs);
+        return String.format(java.util.Locale.getDefault(), "%02d:%02d", minutes, secs);
     }
 }

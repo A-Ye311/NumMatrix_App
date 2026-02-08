@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">sudoku</string>
-</resources>
+<string name="logged_in_as">Eingeloggt als: %1$s</string>
+    </resources>
