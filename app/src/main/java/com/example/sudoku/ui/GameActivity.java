@@ -57,7 +57,7 @@ public class GameActivity extends Activity {
         timerView = findViewById(R.id.tvTimer);
         GridLayout grid = findViewById(R.id.sudokuGrid);
 
-        diffView.setText("Schwierigkeit: " + difficulty);
+        diffView.setText(getString(R.string.difficulty_label, difficulty));
         updateMistakes();
         startTimer();
 
@@ -107,7 +107,7 @@ public class GameActivity extends Activity {
                             int res = game.trySet(rr, cc, val);
 
                             if (res == 1) {
-                                Toast.makeText(GameActivity.this, "Fehler!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(GameActivity.this, R.string.toast_error, Toast.LENGTH_SHORT).show();
                                 cell.setText("");
                                 updateMistakes();
                             } else if (res == 2) {
@@ -132,8 +132,7 @@ public class GameActivity extends Activity {
 
     private void updateMistakes() {
         if (mistakesView != null) {
-            mistakesView.setText("Fehler: " + game.getMistakes() + " / 3");
-        }
+            mistakesView.setText(getString(R.string.mistakes_label, game.getMistakes()));        }
     }
 
     private void applyGridSizing(GridLayout grid) {
@@ -183,7 +182,7 @@ public class GameActivity extends Activity {
         int totalSeconds = elapsedSeconds();
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
-        timerView.setText(String.format("Zeit: %02d:%02d", minutes, seconds));
+        timerView.setText(getString(R.string.time_label, minutes, seconds));
     }
 
     private final Runnable timerTick = new Runnable() {
@@ -206,15 +205,15 @@ public class GameActivity extends Activity {
         if (email != null) stats.recordGame(email, difficulty, win, elapsedSeconds());
 
         AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setTitle(win ? "Spiel gewonnen" : "Spiel vorbei");
-        b.setMessage(win ? "Glückwunsch!" : "3 Fehler erreicht.");
+        b.setTitle(win ? R.string.dialog_title_win : R.string.dialog_title_lose);
+        b.setMessage(win ? R.string.dialog_msg_win : R.string.dialog_msg_lose);
 
-        b.setPositiveButton("NOCHMAL", (d, which) -> {
+        b.setPositiveButton(R.string.dialog_positive, (d, which) -> {
             startActivity(new Intent(this, DifficultyActivity.class));
             finish();
         });
 
-        b.setNegativeButton("BEENDEN", (d, which) -> {
+        b.setNegativeButton(R.string.dialog_negative, (d, which) -> {
             startActivity(new Intent(this, MainMenuActivity.class));
             finish();
         });

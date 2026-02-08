@@ -4,6 +4,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import java.util.Locale;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +19,6 @@ public class StatsManager {
 
     public StatsManager() {
         firestore = FirebaseFirestore.getInstance();
-    }
-
-    public void recordGame(String email, String difficulty, boolean win) {
-        recordGame(email, difficulty, win, 0);
     }
 
     public void recordGame(String email, String difficulty, boolean win, int seconds) {
@@ -108,6 +105,6 @@ public class StatsManager {
     private String formatTime(int seconds) {
         int minutes = seconds / 60;
         int secs = seconds % 60;
-        return String.format("%02d:%02d", minutes, secs);
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs);
     }
 }

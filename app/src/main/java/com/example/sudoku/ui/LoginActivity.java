@@ -26,20 +26,19 @@ public class LoginActivity extends Activity {
         TextView error = findViewById(R.id.tvError);
 
         // 3) Button-Logik
-        findViewById(R.id.btnDoLogin).setOnClickListener(v -> {
-            auth.login(
-                    email.getText().toString().trim(),
-                    pw.getText().toString(),
-                    r -> {
-                        if (!r.ok) {
-                            error.setText(r.message);
-                        } else {
-                            startActivity(new Intent(this, MainMenuActivity.class));
-                            finish();
+        findViewById(R.id.btnDoLogin).setOnClickListener(v ->
+                auth.login(
+                        email.getText().toString().trim(),
+                        pw.getText().toString(),
+                        r -> {
+                            if (!r.ok) {
+                                error.setText(r.message);
+                            } else {
+                                startActivity(new Intent(this, MainMenuActivity.class));
+                                finish();
+                            }
                         }
-                    }
-            );
-        });
+                ));
 
         findViewById(R.id.btnReset).setOnClickListener(v ->
                 startActivity(new Intent(this, ResetRequestActivity.class)));

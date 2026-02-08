@@ -22,7 +22,7 @@ public class ResetRequestActivity extends Activity {
         TextView msg = findViewById(R.id.tvMsg);
 
         findViewById(R.id.btnSend).setOnClickListener(v -> {
-            msg.setText("E-Mail wurde gesendet.");
+            msg.setText(R.string.reset_email_sent);
             Intent i = new Intent(this, ResetPasswordActivity.class);
             i.putExtra("email", email.getText().toString().trim());
             startActivity(i);

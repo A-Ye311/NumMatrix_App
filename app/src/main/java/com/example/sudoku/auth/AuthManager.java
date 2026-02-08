@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Patterns;
 
+import com.example.sudoku.R;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -25,52 +26,52 @@ public class AuthManager {
     }
 
     public void register(String email, String pw, String pw2, Callback cb) {
-        if (!isValidEmail(email)) {
-            cb.onResult(Result.fail("E-Mail ungültig"));
+        if (isInvalidEmail(email)) {
+            cb.onResult(Result.fail(context.getString(R.string.error_email_invalid)));
             return;
         }
         if (pw == null || pw.length() < 4) {
-            cb.onResult(Result.fail("Passwort zu kurz (min 4)"));
+            cb.onResult(Result.fail(context.getString(R.string.error_password_short)));
             return;
         }
         if (!pw.equals(pw2)) {
-            cb.onResult(Result.fail("Passwörter stimmen nicht überein"));
+            cb.onResult(Result.fail(context.getString(R.string.error_password_mismatch)));
             return;
         }
         if (context instanceof Activity) {
             auth.createUserWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, "Registrierung fehlgeschlagen"));
+                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, R.string.error_register_failed));
         } else {
             auth.createUserWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener(task -> handleAuthResult(task, cb, "Registrierung fehlgeschlagen"));
+                    .addOnCompleteListener(task -> handleAuthResult(task, cb, R.string.error_register_failed));
         }
     }
 
     public void login(String email, String pw, Callback cb) {
-        if (!isValidEmail(email)) {
-            cb.onResult(Result.fail("E-Mail ungültig"));
+        if (isInvalidEmail(email)) {
+            cb.onResult(Result.fail(context.getString(R.string.error_email_invalid)));
             return;
         }
         if (context instanceof Activity) {
             auth.signInWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, "Login-Daten falsch"));
+                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, R.string.error_login_failed));
         } else {
             auth.signInWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener(task -> handleAuthResult(task, cb, "Login-Daten falsch"));
+                    .addOnCompleteListener(task -> handleAuthResult(task, cb, R.string.error_login_failed));
         }
     }
 
     public void resetPassword(String email, Callback cb) {
-        if (!isValidEmail(email)) {
-            cb.onResult(Result.fail("E-Mail ungültig"));
+        if (isInvalidEmail(email)) {
+            cb.onResult(Result.fail(context.getString(R.string.error_email_invalid)));
             return;
         }
         if (context instanceof Activity) {
             auth.sendPasswordResetEmail(email)
-                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, "Passwort-Reset fehlgeschlagen"));
+                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, R.string.error_reset_failed));
         } else {
             auth.sendPasswordResetEmail(email)
-                    .addOnCompleteListener(task -> handleAuthResult(task, cb, "Passwort-Reset fehlgeschlagen"));
+                    .addOnCompleteListener(task -> handleAuthResult(task, cb, R.string.error_reset_failed));
         }
     }
 
@@ -78,15 +79,15 @@ public class AuthManager {
         auth.signOut();
     }
 
-    private boolean isValidEmail(String email) {
-        return email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    private boolean isInvalidEmail(String email) {
+        return email == null || !Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private void handleAuthResult(Task<?> task, Callback cb, String fallback) {
+    private void handleAuthResult(Task<?> task, Callback cb, int fallbackResId) {
         if (task.isSuccessful()) {
             cb.onResult(Result.ok());
         } else {
-            cb.onResult(Result.fail(errorMessage(task.getException(), fallback)));
+            cb.onResult(Result.fail(errorMessage(task.getException(), context.getString(fallbackResId))));
         }
     }
 

@@ -24,19 +24,19 @@ public class ResetPasswordActivity extends Activity {
         TextView title = findViewById(R.id.tvTitle);
         TextView msg = findViewById(R.id.tvMsg);
 
-        title.setText("Passwort zurücksetzen: " + (email == null ? "" : email));
+        String safeEmail = email == null ? "" : email;
+        title.setText(getString(R.string.reset_password_title, safeEmail));
 
         // ✅ 3) Speichern
-        findViewById(R.id.btnSave).setOnClickListener(v -> {
-            auth.resetPassword(email, r -> {
-                if (!r.ok) {
-                    msg.setText(r.message);
-                } else {
-                    msg.setText("E-Mail zum Zurücksetzen wurde gesendet.");
-                    startActivity(new Intent(this, LoginActivity.class));
-                    finish();
-                }
-            });
-        });
+        findViewById(R.id.btnSave).setOnClickListener(v ->
+                auth.resetPassword(email, r -> {
+                    if (!r.ok) {
+                        msg.setText(r.message);
+                    } else {
+                        msg.setText(R.string.reset_password_sent);
+                        startActivity(new Intent(this, LoginActivity.class));
+                        finish();
+                    }
+                }));
     }
 }

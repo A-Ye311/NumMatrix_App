@@ -20,9 +20,9 @@ public class StatisticsActivity extends Activity {
         String email = auth.currentUserEmail();
         TextView tv = findViewById(R.id.tvStats);
         if (email == null) {
-            tv.setText("Nicht eingeloggt.");
+            tv.setText(R.string.not_logged_in);
         } else {
-            tv.setText("Lade Statistik...");
+            tv.setText(R.string.loading_stats);
             stats.getSummary(email, tv::setText);
         }
     }

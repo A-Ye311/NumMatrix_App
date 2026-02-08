@@ -1,4 +1,25 @@
 <resources>
     <string name="app_name">sudoku</string>
-<string name="logged_in_as">Eingeloggt als: %1$s</string>
-    </resources>
+    <string name="logged_in_as">Eingeloggt als: %1$s</string>
+    <string name="not_logged_in">Nicht eingeloggt.</string>
+    <string name="loading_stats">Lade Statistik…</string>
+    <string name="difficulty_label">Schwierigkeit: %1$s</string>
+    <string name="mistakes_label">Fehler: %1$d / 3</string>
+    <string name="toast_error">Fehler!</string>
+    <string name="time_label">Zeit: %1$02d:%2$02d</string>
+    <string name="dialog_title_win">Spiel gewonnen</string>
+    <string name="dialog_title_lose">Spiel vorbei</string>
+    <string name="dialog_msg_win">Glückwunsch!</string>
+    <string name="dialog_msg_lose">3 Fehler erreicht.</string>
+    <string name="dialog_positive">NOCHMAL</string>
+    <string name="dialog_negative">BEENDEN</string>
+    <string name="reset_email_sent">E-Mail wurde gesendet.</string>
+    <string name="reset_password_title">Passwort zurücksetzen: %1$s</string>
+    <string name="reset_password_sent">E-Mail zum Zurücksetzen wurde gesendet.</string>
+    <string name="error_email_invalid">E-Mail ungültig</string>
+    <string name="error_password_short">Passwort zu kurz (min 4)</string>
+    <string name="error_password_mismatch">Passwörter stimmen nicht überein</string>
+    <string name="error_register_failed">Registrierung fehlgeschlagen</string>
+    <string name="error_login_failed">Login-Daten falsch</string>
+    <string name="error_reset_failed">Passwort-Reset fehlgeschlagen</string>
+</resources>

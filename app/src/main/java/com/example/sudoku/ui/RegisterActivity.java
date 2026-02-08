@@ -27,20 +27,19 @@ public class RegisterActivity extends Activity {
         TextView error = findViewById(R.id.tvError);
 
         // ✅ Register-Button
-        findViewById(R.id.btnDoRegister).setOnClickListener(v -> {
-            auth.register(
-                    email.getText().toString().trim(),
-                    pw.getText().toString(),
-                    pw2.getText().toString(),
-                    r -> {
-                        if (!r.ok) {
-                            error.setText(r.message);
-                        } else {
-                            startActivity(new Intent(this, MainMenuActivity.class));
-                            finish();
+        findViewById(R.id.btnDoRegister).setOnClickListener(v ->
+                auth.register(
+                        email.getText().toString().trim(),
+                        pw.getText().toString(),
+                        pw2.getText().toString(),
+                        r -> {
+                            if (!r.ok) {
+                                error.setText(r.message);
+                            } else {
+                                startActivity(new Intent(this, MainMenuActivity.class));
+                                finish();
+                            }
                         }
-                    }
-            );
-        });
+                ));
     }
 }
