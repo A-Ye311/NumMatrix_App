@@ -15,6 +15,7 @@ public class StatsManager {
     }
 
     private static final String COLLECTION = "statistik";
+    private static final String DOCUMENT = "stats";
     private final FirebaseFirestore firestore;
 
     public StatsManager() {
@@ -24,8 +25,8 @@ public class StatsManager {
     public void recordGame(String email, String difficulty, boolean win, int seconds) {
         DocumentReference ref = firestore.collection(COLLECTION)
                 .document(email)
-                .collection("stats")
-                .document(difficulty);
+                .collection(DOCUMENT)
+                .document(DOCUMENT);
 
         firestore.runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(ref);
@@ -63,35 +64,25 @@ public class StatsManager {
     public void getSummary(String email, SummaryCallback cb) {
         firestore.collection(COLLECTION)
                 .document(email)
-                .collection("stats")
+                .collection(DOCUMENT)
+                .document(DOCUMENT)
                 .get()
-                .addOnSuccessListener(snapshot -> {
-                    Map<String, DocumentSnapshot> docs = new HashMap<>();
-                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                        docs.put(doc.getId(), doc);
+                .addOnSuccessListener(doc -> {
+                    long played = getLong(doc, "played");
+                    long wins = getLong(doc, "wins");
+                    long totalSeconds = getLong(doc, "totalSeconds");
+                    long bestSeconds = getLong(doc, "bestSeconds");
+                    long avgSeconds = getLong(doc, "avgTime");
+                    if (avgSeconds == 0 && played > 0 && totalSeconds > 0) {
+                        avgSeconds = totalSeconds / played;
                     }
-                    String[] diffs = {"EINFACH", "MITTEL", "SCHWER"};
-                    StringBuilder sb = new StringBuilder();
-                    for (String d : diffs) {
-                        DocumentSnapshot doc = docs.get(d);
-                        long played = getLong(doc, "played");
-                        long wins = getLong(doc, "wins");
-                        long totalSeconds = getLong(doc, "totalSeconds");
-                        long bestSeconds = getLong(doc, "bestSeconds");
-                        long avgSeconds = getLong(doc, "avgTime");
-                        if (avgSeconds == 0 && played > 0 && totalSeconds > 0) {
-                            avgSeconds = totalSeconds / played;
-                        }
-                        String avgTime = avgSeconds > 0 ? formatTime((int) avgSeconds) : "--:--";
-                        String bestTime = bestSeconds > 0 ? formatTime((int) bestSeconds) : "--:--";
-                        sb.append(d)
-                                .append(": gespielt ").append(played)
-                                .append(", gewonnen ").append(wins)
-                                .append(", Ø Zeit ").append(avgTime)
-                                .append(", Bestzeit ").append(bestTime)
-                                .append("\n");
-                    }
-                    cb.onSummary(sb.toString());
+                    String avgTime = avgSeconds > 0 ? formatTime((int) avgSeconds) : "--:--";
+                    String bestTime = bestSeconds > 0 ? formatTime((int) bestSeconds) : "--:--";
+                    String summary = "Gesamt: gespielt " + played
+                            + ", gewonnen " + wins
+                            + ", Ø Zeit " + avgTime
+                            + ", Bestzeit " + bestTime;
+                    cb.onSummary(summary);
                 })
                 .addOnFailureListener(e -> cb.onSummary("Fehler beim Laden der Statistik."));
     }

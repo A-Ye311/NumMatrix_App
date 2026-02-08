@@ -1,9 +1,17 @@
 package com.example.sudoku.game;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
 public class SudokuGenerator {
+
+    private static final int SIZE = 9;
+    private static final int BOX_SIZE = 3;
+    private static final int EASY_REMOVE = 30;
+    private static final int MEDIUM_REMOVE = 40;
+    private static final int HARD_REMOVE = 50;
 
     public static class Puzzle {
         public final int[][] puzzle;   // 0 = leer
@@ -30,33 +38,32 @@ public class SudokuGenerator {
 
         int[][] pz = deepCopy(sol);
 
-        int remove = 30;
-        if ("MITTEL".equals(difficulty)) remove = 40;
-        if ("SCHWER".equals(difficulty)) remove = 50;
+        int remove = removedCellsForDifficulty(difficulty);
 
         removeCellsEvenly(pz, remove);
         return new Puzzle(pz, sol);
     }
 
     private int[][] deepCopy(int[][] src) {
-        int[][] out = new int[9][9];
-        for (int r = 0; r < 9; r++) {
-            System.arraycopy(src[r], 0, out[r], 0, 9);
+        int[][] out = new int[SIZE][SIZE];
+        for (int r = 0; r < SIZE; r++) {
+            System.arraycopy(src[r], 0, out[r], 0, SIZE);
         }
         return out;
     }
-    private void removeCellsEvenly(int[][] puzzle, int remove) {
-        List<int[]>[] byBox = new ArrayList[9];
-        for (int i = 0; i < 9; i++) {
-            byBox[i] = new ArrayList<>();
-        }
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                int box = (r / 3) * 3 + (c / 3);
-                byBox[box].add(new int[]{r, c});
-            }
-        }
 
+    private int removedCellsForDifficulty(String difficulty) {
+        if ("MITTEL".equals(difficulty)) {
+            return MEDIUM_REMOVE;
+        }
+        if ("SCHWER".equals(difficulty)) {
+            return HARD_REMOVE;
+        }
+        return EASY_REMOVE;
+    }
+
+    private void removeCellsEvenly(int[][] puzzle, int remove) {
+        List<List<int[]>> byBox = buildCellsByBox();
         Random random = new Random();
         for (List<int[]> boxCells : byBox) {
             Collections.shuffle(boxCells, random);
@@ -80,5 +87,19 @@ public class SudokuGenerator {
                 break;
             }
         }
+    }
+
+    private List<List<int[]>> buildCellsByBox() {
+        List<List<int[]>> byBox = new ArrayList<>(SIZE);
+        for (int i = 0; i < SIZE; i++) {
+            byBox.add(new ArrayList<>());
+        }
+        for (int r = 0; r < SIZE; r++) {
+            for (int c = 0; c < SIZE; c++) {
+                int box = (r / BOX_SIZE) * BOX_SIZE + (c / BOX_SIZE);
+                byBox.get(box).add(new int[]{r, c});
+            }
+        }
+        return byBox;
     }
 }
