@@ -201,8 +201,8 @@ public class GameActivity extends Activity {
 
     private void onGameEnd(boolean win) {
         stopTimer();
-        String email = auth.currentUserEmail();
-        if (email != null) stats.recordGame(email, difficulty, win, elapsedSeconds());
+        String uid = auth.currentUserUid();
+        if (uid != null) stats.recordGame(uid, win, elapsedSeconds());
 
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(win ? R.string.dialog_title_win : R.string.dialog_title_lose);

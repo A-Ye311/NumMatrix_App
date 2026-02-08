@@ -17,13 +17,14 @@ public class StatisticsActivity extends Activity {
         AuthManager auth = new AuthManager(this);
         StatsManager stats = new StatsManager();
 
-        String email = auth.currentUserEmail();
+        String uid = auth.currentUserUid();   // ✅ UID statt Email
         TextView tv = findViewById(R.id.tvStats);
-        if (email == null) {
+
+        if (uid == null) {
             tv.setText(R.string.not_logged_in);
         } else {
             tv.setText(R.string.loading_stats);
-            stats.getSummary(email, tv::setText);
+            stats.getSummary(uid, tv::setText);  // ✅ UID verwenden
         }
     }
 }

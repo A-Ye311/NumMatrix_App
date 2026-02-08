@@ -25,6 +25,9 @@ public class AuthManager {
         return auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null;
     }
 
+    public String currentUserUid() {
+        return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+    }
     public void register(String email, String pw, String pw2, Callback cb) {
         if (isInvalidEmail(email)) {
             cb.onResult(Result.fail(context.getString(R.string.error_email_invalid)));

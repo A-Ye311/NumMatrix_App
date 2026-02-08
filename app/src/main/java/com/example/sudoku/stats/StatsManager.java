@@ -14,19 +14,18 @@ public class StatsManager {
         void onSummary(String summary);
     }
 
-    private static final String COLLECTION = "statistik";
-    private static final String DOCUMENT = "stats";
+    private static final String COLLECTION = "users";
+
     private final FirebaseFirestore firestore;
 
     public StatsManager() {
         firestore = FirebaseFirestore.getInstance();
     }
 
-    public void recordGame(String email, String difficulty, boolean win, int seconds) {
+    public void recordGame(String uid, boolean win, int seconds)
+    {
         DocumentReference ref = firestore.collection(COLLECTION)
-                .document(email)
-                .collection(DOCUMENT)
-                .document(DOCUMENT);
+                .document(uid);
 
         firestore.runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(ref);
@@ -61,11 +60,9 @@ public class StatsManager {
         });
     }
 
-    public void getSummary(String email, SummaryCallback cb) {
+    public void getSummary(String uid, SummaryCallback cb) {
         firestore.collection(COLLECTION)
-                .document(email)
-                .collection(DOCUMENT)
-                .document(DOCUMENT)
+                .document(uid)
                 .get()
                 .addOnSuccessListener(doc -> {
                     long played = getLong(doc, "played");
