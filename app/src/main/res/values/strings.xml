@@ -16,6 +16,9 @@
     <string name="reset_email_sent">E-Mail wurde gesendet.</string>
     <string name="reset_password_title">Passwort zurücksetzen: %1$s</string>
     <string name="reset_password_sent">E-Mail zum Zurücksetzen wurde gesendet.</string>
+    <string name="reset_password_title_fallback">Passwort zurücksetzen</string>
+    <string name="reset_email_sent_to">E-Mail zum Zurücksetzen wurde an %1$s gesendet. Öffne den Link in deinem Postfach.</string>
+    <string name="back_to_login">ZUM LOGIN</string>
     <string name="error_email_invalid">E-Mail ungültig</string>
     <string name="error_password_short">Passwort zu kurz (min 4)</string>
     <string name="error_password_mismatch">Passwörter stimmen nicht überein</string>

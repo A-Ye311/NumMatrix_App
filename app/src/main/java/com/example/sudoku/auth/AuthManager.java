@@ -29,25 +29,26 @@ public class AuthManager {
     public String currentUserUid() {
         return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
     }
+
     public void register(String email, String pw, String pw2, Callback cb) {
         if (isInvalidEmail(email)) {
             cb.onResult(Result.fail(context.getString(R.string.error_email_invalid)));
-            return;
+            return; // E-Mail falsch
         }
-        if (pw == null || pw.length() < 4) {
+        if (pw == null || pw.length() < 6) {
             cb.onResult(Result.fail(context.getString(R.string.error_password_short)));
-            return;
+            return; // Passwort invalide
         }
         if (!pw.equals(pw2)) {
             cb.onResult(Result.fail(context.getString(R.string.error_password_mismatch)));
-            return;
+            return; // Passwort kein Match
         }
         if (context instanceof Activity) {
-            auth.createUserWithEmailAndPassword(email, pw)
+            auth.createUserWithEmailAndPassword(email, pw) //Listener an Activity gebunden
                     .addOnCompleteListener((Activity) context, task -> handleRegisterResult(task, cb));
         } else {
             auth.createUserWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener(task -> handleRegisterResult(task, cb));
+                    .addOnCompleteListener(task -> handleRegisterResult(task, cb)); //handleRegisterResult -> Fehlermeldung
         }
     }
 

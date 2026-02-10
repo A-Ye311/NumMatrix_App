@@ -23,7 +23,7 @@ public class SudokuGame {
         return mistakes;
     }
 
-    // returns: 0 ok, 1 mistake, 2 game over
+//Fehlern zählen
     public int trySet(int r, int c, int value) {
         if (fixed[r][c] || !isValidValue(value)) return 0;
 

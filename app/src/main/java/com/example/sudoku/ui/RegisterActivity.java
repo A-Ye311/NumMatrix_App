@@ -24,6 +24,7 @@ public class RegisterActivity extends Activity {
         EditText pw2 = findViewById(R.id.etPassword2);
         TextView error = findViewById(R.id.tvError);
 
+
         findViewById(R.id.btnDoRegister).setOnClickListener(v ->
                 auth.register(
                         email.getText().toString().trim(),
