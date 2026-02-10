@@ -20,6 +20,9 @@
     <string name="error_password_short">Passwort zu kurz (min 4)</string>
     <string name="error_password_mismatch">Passwörter stimmen nicht überein</string>
     <string name="error_register_failed">Registrierung fehlgeschlagen</string>
+    <string name="register_verify_email_sent">Registrierung erfolgreich. Bitte bestätige deine E-Mail über den Link im Postfach.</string>
+    <string name="error_register_verify_send_failed">Bestätigungs-E-Mail konnte nicht gesendet werden.</string>
     <string name="error_login_failed">Login-Daten falsch</string>
+    <string name="error_email_not_verified">Bitte zuerst E-Mail bestätigen und dann einloggen.</string>
     <string name="error_reset_failed">Passwort-Reset fehlgeschlagen</string>
-</resources>
+    <string name="reset_only_via_email_link">Öffne den Link aus der Reset-E-Mail, um ein neues Passwort zu setzen.</string></resources>

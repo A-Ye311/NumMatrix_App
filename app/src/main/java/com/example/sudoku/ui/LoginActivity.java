@@ -17,15 +17,12 @@ public class LoginActivity extends Activity {
 
         AuthManager auth = new AuthManager(this);
 
-        // 1) XML laden
         setContentView(R.layout.activity_login);
 
-        // 2) Views aus XML holen
         EditText email = findViewById(R.id.etEmail);
         EditText pw = findViewById(R.id.etPassword);
         TextView error = findViewById(R.id.tvError);
 
-        // 3) Button-Logik
         findViewById(R.id.btnDoLogin).setOnClickListener(v ->
                 auth.login(
                         email.getText().toString().trim(),

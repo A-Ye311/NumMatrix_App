@@ -9,14 +9,12 @@ public class SudokuGame {
     private final boolean[][] fixed;
     private int mistakes = 0;
 
-    // ✅ 1 Argument: Puzzle-Objekt
     public SudokuGame(SudokuGenerator.Puzzle p) {
         this.puzzle = p.puzzle;
         this.solution = p.solution;
         this.fixed = buildFixed(puzzle);
     }
 
-    // ✅ wird in GameActivity benutzt
     public int getCell(int r, int c) {
         return puzzle[r][c];
     }

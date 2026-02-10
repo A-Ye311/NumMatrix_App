@@ -7,6 +7,7 @@ import android.util.Patterns;
 import com.example.sudoku.R;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class AuthManager {
     private final Context context;
@@ -22,7 +23,7 @@ public class AuthManager {
     }
 
     public String currentUserEmail() {
-        return auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null;
+        return auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null; // if-else
     }
 
     public String currentUserUid() {
@@ -43,10 +44,10 @@ public class AuthManager {
         }
         if (context instanceof Activity) {
             auth.createUserWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, R.string.error_register_failed));
+                    .addOnCompleteListener((Activity) context, task -> handleRegisterResult(task, cb));
         } else {
             auth.createUserWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener(task -> handleAuthResult(task, cb, R.string.error_register_failed));
+                    .addOnCompleteListener(task -> handleRegisterResult(task, cb));
         }
     }
 
@@ -57,10 +58,10 @@ public class AuthManager {
         }
         if (context instanceof Activity) {
             auth.signInWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener((Activity) context, task -> handleAuthResult(task, cb, R.string.error_login_failed));
+                    .addOnCompleteListener((Activity) context, task -> handleLoginResult(task, cb));
         } else {
             auth.signInWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener(task -> handleAuthResult(task, cb, R.string.error_login_failed));
+                    .addOnCompleteListener(task -> handleLoginResult(task, cb));
         }
     }
 
@@ -92,6 +93,44 @@ public class AuthManager {
         } else {
             cb.onResult(Result.fail(errorMessage(task.getException(), context.getString(fallbackResId))));
         }
+    }
+
+    private void handleRegisterResult(Task<?> task, Callback cb) {
+        if (!task.isSuccessful()) {
+            cb.onResult(Result.fail(errorMessage(task.getException(), context.getString(R.string.error_register_failed))));
+            return;
+        }
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            cb.onResult(Result.fail(context.getString(R.string.error_register_failed)));
+            return;
+        }
+
+        user.sendEmailVerification().addOnCompleteListener(verificationTask -> {
+            auth.signOut();
+            if (verificationTask.isSuccessful()) {
+                cb.onResult(Result.fail(context.getString(R.string.register_verify_email_sent)));
+            } else {
+                cb.onResult(Result.fail(errorMessage(verificationTask.getException(), context.getString(R.string.error_register_verify_send_failed))));
+            }
+        });
+    }
+
+    private void handleLoginResult(Task<?> task, Callback cb) {
+        if (!task.isSuccessful()) {
+            cb.onResult(Result.fail(errorMessage(task.getException(), context.getString(R.string.error_login_failed))));
+            return;
+        }
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null && !user.isEmailVerified()) {
+            auth.signOut();
+            cb.onResult(Result.fail(context.getString(R.string.error_email_not_verified)));
+            return;
+        }
+
+        cb.onResult(Result.ok());
     }
 
     private String errorMessage(Exception exception, String fallback) {

@@ -48,10 +48,8 @@ public class GameActivity extends Activity {
         SudokuGenerator gen = new SudokuGenerator();
         game = new SudokuGame(gen.generate(difficulty));
 
-        // ✅ 1) Erst Layout laden!
         setContentView(R.layout.activity_game);
 
-        // ✅ 2) Views aus XML holen
         TextView diffView = findViewById(R.id.tvDifficulty);
         mistakesView = findViewById(R.id.tvMistakes);
         timerView = findViewById(R.id.tvTimer);
@@ -61,7 +59,6 @@ public class GameActivity extends Activity {
         updateMistakes();
         startTimer();
 
-        // ✅ 3) Zellen dynamisch ins GridLayout einfügen
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
 
@@ -72,7 +69,6 @@ public class GameActivity extends Activity {
                 cell.setInputType(InputType.TYPE_CLASS_NUMBER);
                 cell.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(1) });
 
-        // ✅ feste Größe + Position im Grid
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams(
                         GridLayout.spec(r),
                         GridLayout.spec(c)
@@ -202,7 +198,7 @@ public class GameActivity extends Activity {
     private void onGameEnd(boolean win) {
         stopTimer();
         String uid = auth.currentUserUid();
-        if (uid != null) stats.recordGame(uid, win, elapsedSeconds());
+        if (uid != null) stats.recordGame(uid, difficulty, win, elapsedSeconds());
 
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(win ? R.string.dialog_title_win : R.string.dialog_title_lose);

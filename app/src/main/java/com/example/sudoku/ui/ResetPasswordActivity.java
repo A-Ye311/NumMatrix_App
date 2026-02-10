@@ -3,10 +3,10 @@ package com.example.sudoku.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.sudoku.R;
-import com.example.sudoku.auth.AuthManager;
 
 public class ResetPasswordActivity extends Activity {
 
@@ -14,29 +14,25 @@ public class ResetPasswordActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AuthManager auth = new AuthManager(this);
         String email = getIntent().getStringExtra("email");
 
-        // ✅ 1) XML laden (nur einmal!)
         setContentView(R.layout.activity_reset_password);
 
-        // ✅ 2) Views holen
         TextView title = findViewById(R.id.tvTitle);
         TextView msg = findViewById(R.id.tvMsg);
 
         String safeEmail = email == null ? "" : email;
         title.setText(getString(R.string.reset_password_title, safeEmail));
 
-        // ✅ 3) Speichern
-        findViewById(R.id.btnSave).setOnClickListener(v ->
-                auth.resetPassword(email, r -> {
-                    if (!r.ok) {
-                        msg.setText(r.message);
-                    } else {
-                        msg.setText(R.string.reset_password_sent);
-                        startActivity(new Intent(this, LoginActivity.class));
-                        finish();
-                    }
-                }));
+        msg.setText(R.string.reset_only_via_email_link);
+
+        // Direktes Zurücksetzen in der App ist absichtlich deaktiviert:
+        // Das Passwort darf nur über den E-Mail-Link zurückgesetzt werden.
+        findViewById(R.id.btnSave).setVisibility(View.GONE);
+
+        findViewById(R.id.tvTitle).postDelayed(() -> {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }, 1600);
     }
 }

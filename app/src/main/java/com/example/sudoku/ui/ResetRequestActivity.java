@@ -14,10 +14,8 @@ public class ResetRequestActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ✅ nur XML laden
         setContentView(R.layout.activity_reset_request);
 
-        // ✅ Views aus XML holen
         EditText email = findViewById(R.id.etEmail);
         TextView msg = findViewById(R.id.tvMsg);
 
