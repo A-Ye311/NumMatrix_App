@@ -35,7 +35,7 @@ public class AuthManager {
             cb.onResult(Result.fail(context.getString(R.string.error_email_invalid)));
             return; // E-Mail falsch
         }
-        if (pw == null || pw.length() < 6) {
+        if (pw == null || pw.length() < 4) {
             cb.onResult(Result.fail(context.getString(R.string.error_password_short)));
             return; // Passwort invalide
         }

@@ -1,17 +1,16 @@
 package com.example.sudoku.game;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public class SudokuGenerator {
-
     private static final int SIZE = 9;
-    private static final int BOX_SIZE = 3;
+    private static final int BOX = 3;
+
     private static final int EASY_REMOVE = 30;
     private static final int MEDIUM_REMOVE = 40;
     private static final int HARD_REMOVE = 50;
+
+    private final Random rnd = new Random();
 
     public static class Puzzle {
         public final int[][] puzzle;   // 0 = leer
@@ -37,69 +36,51 @@ public class SudokuGenerator {
         };
 
         int[][] pz = deepCopy(sol);
-
         int remove = removedCellsForDifficulty(difficulty);
 
-        removeCellsEvenly(pz, remove);
-        return new Puzzle(pz, sol);
+        removeCellsByBox(pz, remove);
+        return new Puzzle(pz, sol); // optional: deepCopy(sol) auch hier
     }
 
-    private int[][] deepCopy(int[][] src) {
+    private static int[][] deepCopy(int[][] src) {
         int[][] out = new int[SIZE][SIZE];
-        for (int r = 0; r < SIZE; r++) {
-            System.arraycopy(src[r], 0, out[r], 0, SIZE);
-        }
+        for (int r = 0; r < SIZE; r++) System.arraycopy(src[r], 0, out[r], 0, SIZE);
         return out;
     }
 
-    private int removedCellsForDifficulty(String difficulty) {
-        if ("MITTEL".equals(difficulty)) {
-            return MEDIUM_REMOVE;
+    private static int removedCellsForDifficulty(String difficulty) {
+        if (difficulty == null) return EASY_REMOVE;
+        switch (difficulty.toUpperCase()) {
+            case "MITTEL": return MEDIUM_REMOVE;
+            case "SCHWER": return HARD_REMOVE;
+            default: return EASY_REMOVE;
         }
-        if ("SCHWER".equals(difficulty)) {
-            return HARD_REMOVE;
-        }
-        return EASY_REMOVE;
     }
 
-    private void removeCellsEvenly(int[][] puzzle, int remove) {
-        List<List<int[]>> byBox = buildCellsByBox();
-        Random random = new Random();
-        for (List<int[]> boxCells : byBox) {
-            Collections.shuffle(boxCells, random);
+    private void removeCellsByBox(int[][] puzzle, int remove) {
+        int perBox = remove / 9;
+        int rest = remove % 9;
+
+        // erst pro Box gleichmäßig löschen
+        for (int box = 0; box < 9; box++) {
+            int target = perBox + (box < rest ? 1 : 0);
+            removeFromBox(puzzle, box, target);
         }
+    }
+
+    private void removeFromBox(int[][] puzzle, int box, int target) {
+        int startR = (box / 3) * BOX;
+        int startC = (box % 3) * BOX;
 
         int removed = 0;
-        while (removed < remove) {
-            boolean removedThisRound = false;
-            for (List<int[]> boxCells : byBox) {
-                if (removed >= remove) {
-                    break;
-                }
-                if (!boxCells.isEmpty()) {
-                    int[] cell = boxCells.remove(boxCells.size() - 1);
-                    puzzle[cell[0]][cell[1]] = 0;
-                    removed++;
-                    removedThisRound = true;
-                }
-            }
-            if (!removedThisRound) {
-                break;
+        int guard = 0; // verhindert Endlosschleife, falls Box schon leer wäre
+        while (removed < target && guard++ < 200) {
+            int r = startR + rnd.nextInt(BOX);
+            int c = startC + rnd.nextInt(BOX);
+            if (puzzle[r][c] != 0) {
+                puzzle[r][c] = 0;
+                removed++;
             }
         }
-    }
-
-    private List<List<int[]>> buildCellsByBox() {
-        List<List<int[]>> byBox = new ArrayList<>(SIZE);
-        for (int i = 0; i < SIZE; i++) {
-            byBox.add(new ArrayList<>());
-        }
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                int box = (r / BOX_SIZE) * BOX_SIZE + (c / BOX_SIZE);
-                byBox.get(box).add(new int[]{r, c});
-            }
-        }
-        return byBox;
     }
 }
