@@ -15,13 +15,13 @@ public class SettingsActivity extends Activity {
         AuthManager auth = new AuthManager(this);
 
         setContentView(R.layout.activity_settings);
-
+        //Button
         Button logout = findViewById(R.id.btnLogout);
         logout.setOnClickListener(v -> {
-            auth.logout();
+            auth.logout(); //ausloggen ruft FireBaseAuth.signOut()
             Intent i = new Intent(this, StartActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
+            startActivity(i); //StartActivity wird gezeigt
             finish();
         });
     }

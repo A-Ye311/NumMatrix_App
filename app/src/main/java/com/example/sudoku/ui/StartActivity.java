@@ -31,16 +31,17 @@ public class StartActivity extends Activity {
 
         updateLoginState();
     }
-
+    //kann von Login oder Register zurückkommen
     @Override
     protected void onResume() {
         super.onResume();
         updateLoginState();
     }
-
+    //Holt den aktuellen Login-Status aus Firebase
     private void updateLoginState() {
         AuthManager auth = new AuthManager(this);
         String email = auth.currentUserEmail();
+        //Bereits eingeloggte Nutzer müssen sich nicht erneut anmelden
         if (email != null) {
             loggedInInfo.setText(getString(R.string.logged_in_as, email));
             loggedInInfo.setVisibility(View.VISIBLE);
@@ -49,7 +50,7 @@ public class StartActivity extends Activity {
                     startActivity(new Intent(this, MainMenuActivity.class)));
             return;
         }
-
+        //Nicht eingeloggte Nutzer
         loggedInInfo.setVisibility(View.GONE);
         btnContinue.setVisibility(View.GONE);
         btnContinue.setOnClickListener(null);

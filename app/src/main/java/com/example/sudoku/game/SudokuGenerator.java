@@ -39,7 +39,7 @@ public class SudokuGenerator {
         int remove = removedCellsForDifficulty(difficulty);
 
         removeCellsByBox(pz, remove);
-        return new Puzzle(pz, sol); // optional: deepCopy(sol) auch hier
+        return new Puzzle(pz, sol);
     }
 
     private static int[][] deepCopy(int[][] src) {

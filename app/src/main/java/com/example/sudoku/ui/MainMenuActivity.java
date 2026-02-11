@@ -10,7 +10,7 @@ public class MainMenuActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main_menu);
+        setContentView(R.layout.activity_main_menu); //Hauptmenü
 
         Button start = findViewById(R.id.btnStartGame);
         Button stats = findViewById(R.id.btnStats);
