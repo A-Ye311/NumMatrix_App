@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.sudoku.R;
@@ -26,7 +25,7 @@ public class StatisticsActivity extends Activity {
 
         String uid = auth.currentUserUid();
         TextView stateText = findViewById(R.id.tvStatsState);
-        TableLayout statsTable = findViewById(R.id.tableStats);
+        LinearLayout statsRowsContainer = findViewById(R.id.layoutStatsRows);
 
         if (uid == null) {
             stateText.setText(R.string.not_logged_in);
@@ -35,12 +34,12 @@ public class StatisticsActivity extends Activity {
 
         stateText.setText(R.string.loading_stats);
         stats.getSummary(uid,
-                rows -> showRows(rows, stateText, statsTable),
+                rows -> showRows(rows, stateText, statsRowsContainer),
                 () -> stateText.setText(R.string.stats_load_error));
     }
 
-    private void showRows(List<StatsManager.StatRow> rows, TextView stateText, TableLayout statsTable) {
-        clearBodyRows(statsTable);
+    private void showRows(List<StatsManager.StatRow> rows, TextView stateText, LinearLayout statsRowsContainer) {
+        clearBodyRows(statsRowsContainer);
 
         if (rows.isEmpty() || rows.get(0).played == 0) {
             stateText.setText(R.string.stats_no_data);
@@ -49,13 +48,14 @@ public class StatisticsActivity extends Activity {
 
         stateText.setText("");
         for (StatsManager.StatRow row : rows) {
-            TableRow tableRow = new TableRow(this);
-            tableRow.addView(createCell(row.label, false));
-            tableRow.addView(createCell(String.valueOf(row.played), true));
-            tableRow.addView(createCell(String.valueOf(row.wins), true));
-            tableRow.addView(createCell(row.avgTime, true));
-            tableRow.addView(createCell(row.bestTime, true));
-            statsTable.addView(tableRow);
+            LinearLayout rowLayout = new LinearLayout(this);
+            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            rowLayout.addView(createCell(row.label, false));
+            rowLayout.addView(createCell(String.valueOf(row.played), true));
+            rowLayout.addView(createCell(String.valueOf(row.wins), true));
+            rowLayout.addView(createCell(row.avgTime, true));
+            rowLayout.addView(createCell(row.bestTime, true));
+            statsRowsContainer.addView(rowLayout);
         }
     }
 
@@ -66,7 +66,7 @@ public class StatisticsActivity extends Activity {
         if (alignEnd) {
             cell.setGravity(Gravity.END);
         }
-        cell.setLayoutParams(new TableRow.LayoutParams(
+        cell.setLayoutParams(new LinearLayout.LayoutParams(
                 0,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 1f
@@ -74,9 +74,7 @@ public class StatisticsActivity extends Activity {
         return cell;
     }
 
-    private void clearBodyRows(TableLayout statsTable) {
-        while (statsTable.getChildCount() > 1) {
-            statsTable.removeViewAt(1);
-        }
+    private void clearBodyRows(LinearLayout statsRowsContainer) {
+        statsRowsContainer.removeAllViews();
     }
 }

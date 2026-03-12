@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -25,45 +25,61 @@
             android:text="Deine Statistik"
             android:textSize="28sp"
             android:textStyle="bold" />
-
-        <TableLayout
-            android:id="@+id/tableStats"
+        <LinearLayout
+            android:id="@+id/statsHeaderRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            android:shrinkColumns="*">
+            android:orientation="horizontal">
 
-            <TableRow>
-                <TextView
-                    android:padding="8dp"
-                    android:text="@string/stats_header_level"
-                    android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="@string/stats_header_level"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:padding="8dp"
-                    android:gravity="end"
-                    android:text="@string/stats_header_played"
-                    android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="8dp"
+                android:text="@string/stats_header_played"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:padding="8dp"
-                    android:gravity="end"
-                    android:text="@string/stats_header_wins"
-                    android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="8dp"
+                android:text="@string/stats_header_wins"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:padding="8dp"
-                    android:gravity="end"
-                    android:text="@string/stats_header_avg"
-                    android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="8dp"
+                android:text="@string/stats_header_avg"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:padding="8dp"
-                    android:gravity="end"
-                    android:text="@string/stats_header_best"
-                    android:textStyle="bold" />
-            </TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="8dp"
+                android:text="@string/stats_header_best"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-        </TableLayout>
+        <LinearLayout
+            android:id="@+id/layoutStatsRows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
     </LinearLayout>
 </ScrollView>

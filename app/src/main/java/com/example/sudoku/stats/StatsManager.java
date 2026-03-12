@@ -126,11 +126,20 @@ public class StatsManager {
     }
 
     private String difficultyKey(String difficulty) {
-        if (difficulty == null) return "unknown";
-        String s = difficulty.trim().toUpperCase(Locale.ROOT);
-        if (s.equals("EINFACH")) return "easy";
-        if (s.equals("MITTEL")) return "medium";
-        if (s.equals("SCHWER")) return "hard";
-        return "unknown";
+        if (difficulty == null) {
+            return "unknown";
+        }
+
+        String normalized = difficulty.trim().toUpperCase(Locale.ROOT);
+        switch (normalized) {
+            case "EINFACH":
+                return "easy";
+            case "MITTEL":
+                return "medium";
+            case "SCHWER":
+                return "hard";
+            default:
+                return "unknown";
+        }
     }
 }

@@ -35,5 +35,11 @@
     <string name="stats_header_avg">Ø Zeit</string>
     <string name="stats_header_best">Bestzeit</string>
     <string name="stats_no_data">Noch keine Spiele vorhanden.</string>
+    <string name="menu_welcome">Willkommen</string>
+    <string name="menu_title">Hauptmenü</string>
+    <string name="menu_start_game">SPIEL STARTEN</string>
+    <string name="menu_statistics">STATISTIK</string>
+    <string name="menu_settings">EINSTELLUNG</string>
+    <string name="stats_title">Deine Statistik</string>
     <string name="stats_load_error">Fehler beim Laden der Statistik.</string>
     </resources>
