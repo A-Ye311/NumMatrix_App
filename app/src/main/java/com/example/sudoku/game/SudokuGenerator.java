@@ -58,8 +58,8 @@ public class SudokuGenerator {
     }
 
     private void removeCellsByBox(int[][] puzzle, int remove) {
-        int perBox = remove / 9;
-        int rest = remove % 9;
+        int perBox = remove / 9; // pro Box
+        int rest = remove % 9; // Reste
 
         // erst pro Box gleichmäßig löschen
         for (int box = 0; box < 9; box++) {
@@ -69,8 +69,8 @@ public class SudokuGenerator {
     }
 
     private void removeFromBox(int[][] puzzle, int box, int target) {
-        int startR = (box / 3) * BOX;
-        int startC = (box % 3) * BOX;
+        int startR = (box / 3) * BOX; // Reihe
+        int startC = (box % 3) * BOX; // Spalte
 
         int removed = 0;
         int guard = 0; // verhindert Endlosschleife, falls Box schon leer wäre

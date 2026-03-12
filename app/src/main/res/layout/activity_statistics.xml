@@ -1,12 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvStats"
-        android:padding="24dp"
-        android:textSize="18sp"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvStatsState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/loading_stats"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvStatsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Deine Statistik"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:id="@+id/tableStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:shrinkColumns="*">
+
+            <TableRow>
+                <TextView
+                    android:padding="8dp"
+                    android:text="@string/stats_header_level"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:padding="8dp"
+                    android:gravity="end"
+                    android:text="@string/stats_header_played"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:padding="8dp"
+                    android:gravity="end"
+                    android:text="@string/stats_header_wins"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:padding="8dp"
+                    android:gravity="end"
+                    android:text="@string/stats_header_avg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:padding="8dp"
+                    android:gravity="end"
+                    android:text="@string/stats_header_best"
+                    android:textStyle="bold" />
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
 </ScrollView>

@@ -28,4 +28,12 @@
     <string name="error_login_failed">Login-Daten falsch</string>
     <string name="error_email_not_verified">Bitte zuerst E-Mail bestätigen und dann einloggen.</string>
     <string name="error_reset_failed">Passwort-Reset fehlgeschlagen</string>
-    <string name="reset_only_via_email_link">Öffne den Link aus der Reset-E-Mail, um ein neues Passwort zu setzen.</string></resources>
+    <string name="reset_only_via_email_link">Öffne den Link aus der Reset-E-Mail, um ein neues Passwort zu setzen.</string>
+    <string name="stats_header_level">Bereich</string>
+    <string name="stats_header_played">Gespielt</string>
+    <string name="stats_header_wins">Gewonnen</string>
+    <string name="stats_header_avg">Ø Zeit</string>
+    <string name="stats_header_best">Bestzeit</string>
+    <string name="stats_no_data">Noch keine Spiele vorhanden.</string>
+    <string name="stats_load_error">Fehler beim Laden der Statistik.</string>
+    </resources>

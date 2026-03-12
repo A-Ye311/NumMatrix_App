@@ -5,34 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="30dp"
+        android:text="Willkommen"
+        android:textColor="#1A1A1A"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="171dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="16dp"
         android:text="Hauptmenü"
         android:textSize="24sp"
-        android:layout_marginBottom="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:textStyle="bold"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStartGame"
-        android:text="SPIEL STARTEN"
-        android:layout_width="match_parent"
         style="@style/Widget.Sudoku.Button"
-        android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SPIEL STARTEN" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStats"
+        style="@style/Widget.Sudoku.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.Sudoku.Button"
         android:layout_marginTop="12dp"
         android:text="STATISTIK" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSettings"
+        style="@style/Widget.Sudoku.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        style="@style/Widget.Sudoku.Button"
         android:text="EINSTELLUNG" />
 
 </LinearLayout>

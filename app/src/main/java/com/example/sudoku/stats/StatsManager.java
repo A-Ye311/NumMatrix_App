@@ -4,15 +4,37 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-import java.util.Locale;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class StatsManager {
 
     public interface SummaryCallback {
-        void onSummary(String summary);
+        void onSummary(List<StatRow> rows);
+    }
+
+    public interface ErrorCallback {
+        void onError();
+    }
+
+    public static class StatRow {
+        public final String label;
+        public final long played;
+        public final long wins;
+        public final String avgTime;
+        public final String bestTime;
+
+        public StatRow(String label, long played, long wins, String avgTime, String bestTime) {
+            this.label = label;
+            this.played = played;
+            this.wins = wins;
+            this.avgTime = avgTime;
+            this.bestTime = bestTime;
+        }
     }
 
     private static final String COLLECTION = "users";
@@ -28,15 +50,14 @@ public class StatsManager {
             DocumentSnapshot doc = tx.get(ref);
 
             Map<String, Object> payload = new HashMap<>();
-            updateBlock(doc, payload, "", win, seconds);                 // Gesamt
-            updateBlock(doc, payload, "_" + diffKey, win, seconds);      // Pro Schwierigkeit
+            updateBlock(doc, payload, "", win, seconds);
+            updateBlock(doc, payload, "_" + diffKey, win, seconds);
 
             tx.set(ref, payload, SetOptions.merge());
             return null;
         });
     }
 
-    // suffix = "" (gesamt) oder "_easy/_medium/_hard"
     private void updateBlock(DocumentSnapshot doc, Map<String, Object> out, String suffix,
                              boolean win, int seconds) {
 
@@ -50,35 +71,35 @@ public class StatsManager {
 
         if (seconds > 0) {
             total += seconds;
-            if (best == 0 || seconds < best) best = seconds;
+            if (win && best == 0 || seconds < best) best = seconds;
         }
 
         out.put("played" + suffix, played);
         out.put("wins" + suffix, wins);
         out.put("totalSeconds" + suffix, total);
         out.put("bestSeconds" + suffix, best);
-        // avgTime speichern wir nicht, wird beim Anzeigen berechnet
     }
 
-    public void getSummary(String uid, SummaryCallback cb) {
+    public void getSummary(String uid, SummaryCallback onSuccess, ErrorCallback onError) {
         firestore.collection(COLLECTION).document(uid).get()
                 .addOnSuccessListener(doc -> {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(summaryLine(doc, "Gesamt", ""));
+                    List<StatRow> rows = new ArrayList<>();
+                    rows.add(summaryRow(doc, "Gesamt", ""));
 
                     for (String d : DIFFICULTIES) {
                         String k = "_" + difficultyKey(d);
                         long played = getLong(doc, "played" + k);
                         if (played > 0) {
-                            sb.append("\n").append(summaryLine(doc, d, k));
+                            rows.add(summaryRow(doc, d, k));
                         }
                     }
-                    cb.onSummary(sb.toString());
+
+                    onSuccess.onSummary(rows);
                 })
-                .addOnFailureListener(e -> cb.onSummary("Fehler beim Laden der Statistik."));
+                .addOnFailureListener(e -> onError.onError());
     }
 
-    private String summaryLine(DocumentSnapshot doc, String label, String suffix) {
+    private StatRow summaryRow(DocumentSnapshot doc, String label, String suffix) {
         long played = getLong(doc, "played" + suffix);
         long wins = getLong(doc, "wins" + suffix);
         long total = getLong(doc, "totalSeconds" + suffix);
@@ -87,12 +108,9 @@ public class StatsManager {
         long avg = (played > 0 && total > 0) ? (total / played) : 0;
 
         String avgTime = avg > 0 ? formatTime((int) avg) : "--:--";
-        String bestTime = best > 0 ? formatTime((int) best) : "--:--";
+        String bestTime = (wins > 0 && best > 0) ? formatTime((int) best) : "--:--";
 
-        return label + ": gespielt " + played
-                + ", gewonnen " + wins
-                + ", Ø Zeit " + avgTime
-                + ", Bestzeit " + bestTime;
+        return new StatRow(label, played, wins, avgTime, bestTime);
     }
 
     private long getLong(DocumentSnapshot doc, String key) {
