@@ -88,10 +88,7 @@ public class StatsManager {
 
                     for (String d : DIFFICULTIES) {
                         String k = "_" + difficultyKey(d);
-                        long played = getLong(doc, "played" + k);
-                        if (played > 0) {
-                            rows.add(summaryRow(doc, d, k));
-                        }
+                        rows.add(summaryRow(doc, d, k));
                     }
 
                     onSuccess.onSummary(rows);
@@ -107,8 +104,8 @@ public class StatsManager {
 
         long avg = (played > 0 && total > 0) ? (total / played) : 0;
 
-        String avgTime = avg > 0 ? formatTime((int) avg) : "--:--";
-        String bestTime = (wins > 0 && best > 0) ? formatTime((int) best) : "--:--";
+        String avgTime = avg > 0 ? formatTime((int) avg) : formatTime(0);
+        String bestTime = (wins > 0 && best > 0) ? formatTime((int) best) : formatTime(0);
 
         return new StatRow(label, played, wins, avgTime, bestTime);
     }

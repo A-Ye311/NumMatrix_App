@@ -41,13 +41,15 @@ public class StatisticsActivity extends Activity {
     private void showRows(List<StatsManager.StatRow> rows, TextView stateText, LinearLayout statsRowsContainer) {
         clearBodyRows(statsRowsContainer);
 
-        if (rows.isEmpty() || rows.get(0).played == 0) {
+        if (rows.isEmpty()) {
             stateText.setText(R.string.stats_no_data);
             return;
         }
 
-        stateText.setText("");
+        long totalPlayed = 0;
         for (StatsManager.StatRow row : rows) {
+            totalPlayed += row.played;
+
             LinearLayout rowLayout = new LinearLayout(this);
             rowLayout.setOrientation(LinearLayout.HORIZONTAL);
             rowLayout.addView(createCell(row.label, false));
@@ -56,6 +58,12 @@ public class StatisticsActivity extends Activity {
             rowLayout.addView(createCell(row.avgTime, true));
             rowLayout.addView(createCell(row.bestTime, true));
             statsRowsContainer.addView(rowLayout);
+        }
+
+        if (totalPlayed == 0) {
+            stateText.setText(R.string.stats_no_data);
+        } else {
+            stateText.setText("");
         }
     }
 
