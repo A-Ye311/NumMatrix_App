@@ -8,6 +8,7 @@ import com.example.sudoku.R;
 
 import com.example.sudoku.auth.AuthManager;
 
+/** Einstellungen mit der Möglichkeit zum Ausloggen. */
 public class SettingsActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

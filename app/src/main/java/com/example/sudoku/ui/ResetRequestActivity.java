@@ -11,8 +11,9 @@ import android.widget.Toast;
 import com.example.sudoku.R;
 import com.example.sudoku.auth.AuthManager;
 
+/** Seite zum Anfordern einer Passwort-Reset-E-Mail. */
 public class ResetRequestActivity extends Activity {
-
+    /** Baut die Ansicht der Seite auf. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

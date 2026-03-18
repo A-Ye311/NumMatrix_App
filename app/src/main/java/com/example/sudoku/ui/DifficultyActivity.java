@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import com.example.sudoku.R;
 
+/** Auswahlseite für die gewünschte Sudoku-Schwierigkeit. */
 public class DifficultyActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +19,7 @@ public class DifficultyActivity extends Activity {
         medium.setOnClickListener(v -> startGame("MITTEL"));
         hard.setOnClickListener(v -> startGame("SCHWER"));
     }
-
+    /** Startet ein neues Spiel mit der gewählten Schwierigkeit. */
     private void startGame(String difficulty) {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("difficulty", difficulty);

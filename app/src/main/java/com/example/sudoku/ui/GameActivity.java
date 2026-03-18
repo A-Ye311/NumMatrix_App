@@ -21,7 +21,9 @@ import com.example.sudoku.auth.AuthManager;
 import com.example.sudoku.game.SudokuGame;
 import com.example.sudoku.game.SudokuGenerator;
 import com.example.sudoku.stats.StatsManager;
-
+/**
+ * Zeigt das Sudoku-Spiel an und verbindet Eingaben mit der Spiellogik.
+ */
 public class GameActivity extends Activity {
 
     private static final int GRID = 9;
@@ -40,6 +42,7 @@ public class GameActivity extends Activity {
     private StatsManager stats;
     private AuthManager auth;
 
+    /** Baut die Spielansicht auf und startet ein neues Spiel. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +70,7 @@ public class GameActivity extends Activity {
 
         startTimer();
     }
-    //9x9 Zellen erzeugen
+    /** Erstellt alle 81 Zellen des Sudoku-Feldes. */
     private void buildGrid(GridLayout grid) {
         grid.removeAllViews();
 
@@ -88,7 +91,7 @@ public class GameActivity extends Activity {
             }
         }
     }
-    //Konfiguration jeder Zelle
+    /** Erstellt eine einzelne Eingabezelle mit einfachem Zahlenfeld. */
     private EditText createCell(int r, int c) {
         EditText cell = new EditText(this);
         cell.setBackgroundResource(R.drawable.cell_border);
@@ -103,7 +106,7 @@ public class GameActivity extends Activity {
 
         return cell;
     }
-    // prüft jede Eingabe in einer Sudoku-Zelle sofort
+    /** Prüft jede Eingabe sofort nach dem Tippen. */
     private void attachInputWatcher(EditText cell, int r, int c) {
         cell.addTextChangedListener(new TextWatcher() {
             boolean inner;
@@ -130,6 +133,7 @@ public class GameActivity extends Activity {
         });
     }
 
+    /** Liest eine Zahl 1 bis 9. Ungültige Eingaben werden gelöscht. */
     private int parseDigitOrClear(EditText cell, String t) {
         try {
             int v = Integer.parseInt(t);
@@ -141,6 +145,7 @@ public class GameActivity extends Activity {
         }
     }
 
+    /** Reagiert auf das Ergebnis eines Spielzugs. */
     private void handleMoveResult(EditText cell, int res) {
         if (res == 1) {
             Toast.makeText(this, R.string.toast_error, Toast.LENGTH_SHORT).show();
@@ -160,25 +165,30 @@ public class GameActivity extends Activity {
         if (game.isComplete()) onGameEnd(true);
     }
 
+    /** Aktualisiert die Anzeige für die Fehlerzahl. */
     private void updateMistakes() {
         mistakesView.setText(getString(R.string.mistakes_label, game.getMistakes()));
     }
 
+    /** Startet den Spiel-Timer. */
     private void startTimer() {
         startTimeMs = System.currentTimeMillis();
         timerRunning = true;
         timerHandler.post(timerTick);
     }
 
+    /** Stoppt den Spiel-Timer. */
     private void stopTimer() {
         timerRunning = false;
         timerHandler.removeCallbacks(timerTick);
     }
 
+    /** Berechnet die bisher vergangene Spielzeit in Sekunden. */
     private int elapsedSeconds() {
         return (int) ((System.currentTimeMillis() - startTimeMs) / 1000);
     }
 
+    /** Schreibt die aktuelle Zeit in die Oberfläche. */
     private void updateTimerText() {
         int total = elapsedSeconds();
         int m = total / 60;
@@ -194,6 +204,7 @@ public class GameActivity extends Activity {
         }
     };
 
+    /** Passt die Größe der Zellen an die verfügbare Breite an. */
     private void applyGridSizing(GridLayout grid) {
         int thin = dpToPx(1);
         int thick = dpToPx(4);
@@ -221,11 +232,13 @@ public class GameActivity extends Activity {
         }
     }
 
+    /** Rechnet dp in Pixel um. */
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
     }
-    // Spielende
+
+    /** Beendet das Spiel, speichert Statistik und zeigt einen Dialog. */
     private void onGameEnd(boolean win) {
         stopTimer();
         //Stats speichern

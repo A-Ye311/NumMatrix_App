@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import com.example.sudoku.R;
 
+/** Hauptmenü der App mit Navigation zu den wichtigsten Bereichen. */
 public class MainMenuActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

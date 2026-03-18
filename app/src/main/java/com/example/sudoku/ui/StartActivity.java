@@ -10,10 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.example.sudoku.auth.AuthManager;
 
+/** Startseite der App mit Login-, Register- und Weiter-Option. */
 public class StartActivity extends Activity {
     private TextView loggedInInfo;
     private Button btnContinue;
 
+    /** Baut die Ansicht der Seite auf. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,13 +33,13 @@ public class StartActivity extends Activity {
 
         updateLoginState();
     }
-    //kann von Login oder Register zurückkommen
+    /** Aktualisiert die Ansicht, wenn die Seite wieder sichtbar wird. */
     @Override
     protected void onResume() {
         super.onResume();
         updateLoginState();
     }
-    //Holt den aktuellen Login-Status aus Firebase
+    /** Zeigt an, ob schon ein Benutzer eingeloggt ist. */
     private void updateLoginState() {
         AuthManager auth = new AuthManager(this);
         String email = auth.currentUserEmail();
@@ -50,7 +52,7 @@ public class StartActivity extends Activity {
                     startActivity(new Intent(this, MainMenuActivity.class)));
             return;
         }
-        //Nicht eingeloggte Nutzer
+
         loggedInInfo.setVisibility(View.GONE);
         btnContinue.setVisibility(View.GONE);
         btnContinue.setOnClickListener(null);

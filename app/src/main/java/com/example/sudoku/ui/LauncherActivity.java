@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.example.sudoku.auth.AuthManager;
 
+/** Startet die passende erste Seite je nach Login-Status. */
 public class LauncherActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

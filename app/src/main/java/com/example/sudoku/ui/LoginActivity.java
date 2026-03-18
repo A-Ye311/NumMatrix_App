@@ -9,8 +9,9 @@ import android.widget.TextView;
 import com.example.sudoku.R;
 import com.example.sudoku.auth.AuthManager;
 
+/** Login-Seite für bestehende Benutzer. */
 public class LoginActivity extends Activity {
-
+    /** Baut die Ansicht der Seite auf. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Standard-Initialisierung der Android-Activity

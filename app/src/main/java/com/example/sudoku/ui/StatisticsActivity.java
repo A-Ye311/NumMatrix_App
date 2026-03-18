@@ -13,7 +13,9 @@ import com.example.sudoku.stats.StatsManager;
 
 import java.util.List;
 
+/** Zeigt die gespeicherten Spielstatistiken des Benutzers an. */
 public class StatisticsActivity extends Activity {
+    /** Baut die Ansicht der Seite auf. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,7 @@ public class StatisticsActivity extends Activity {
                 () -> stateText.setText(R.string.stats_load_error));
     }
 
+    /** Baut die Statistik-Tabelle aus den geladenen Daten. */
     private void showRows(List<StatsManager.StatRow> rows, TextView stateText, LinearLayout statsRowsContainer) {
         clearBodyRows(statsRowsContainer);
 
@@ -67,6 +70,7 @@ public class StatisticsActivity extends Activity {
         }
     }
 
+    /** Erstellt eine einfache Tabellenzelle für die Statistik. */
     private TextView createCell(String text, boolean alignEnd) {
         TextView cell = new TextView(this);
         cell.setText(text);
@@ -82,6 +86,7 @@ public class StatisticsActivity extends Activity {
         return cell;
     }
 
+    /** Entfernt alte Statistik-Zeilen aus der Ansicht. */
     private void clearBodyRows(LinearLayout statsRowsContainer) {
         statsRowsContainer.removeAllViews();
     }
