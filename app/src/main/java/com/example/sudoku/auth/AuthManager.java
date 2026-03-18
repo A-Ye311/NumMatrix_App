@@ -26,7 +26,7 @@ public class AuthManager {
 
     /** Liefert die E-Mail des aktuellen Benutzers oder null. */
     public String currentUserEmail() {
-        return auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null; // if-else
+        return auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null;
     }
 
     /** Liefert die UID des aktuellen Benutzers oder null. */
@@ -49,11 +49,11 @@ public class AuthManager {
             return;
         }
         if (context instanceof Activity) {
-            auth.createUserWithEmailAndPassword(email, pw) //Listener an Activity gebunden
+            auth.createUserWithEmailAndPassword(email, pw)
                     .addOnCompleteListener((Activity) context, task -> handleRegisterResult(task, cb));
         } else {
             auth.createUserWithEmailAndPassword(email, pw)
-                    .addOnCompleteListener(task -> handleRegisterResult(task, cb)); //handleRegisterResult -> Fehlermeldung
+                    .addOnCompleteListener(task -> handleRegisterResult(task, cb));
         }
     }
     /** Meldet einen vorhanden Benutzer an. */
@@ -118,7 +118,7 @@ public class AuthManager {
         user.sendEmailVerification().addOnCompleteListener(verificationTask -> {
             auth.signOut();
             if (verificationTask.isSuccessful()) {
-                cb.onResult(Result.fail(context.getString(R.string.register_verify_email_sent)));
+                cb.onResult(Result.ok(context.getString(R.string.register_verify_email_sent)));
             } else {
                 cb.onResult(Result.fail(errorMessage(verificationTask.getException(), context.getString(R.string.error_register_verify_send_failed))));
             }
@@ -153,6 +153,7 @@ public class AuthManager {
         public final String message;
         private Result(boolean ok, String message) { this.ok = ok; this.message = message; }
         public static Result ok() { return new Result(true, null); }
+        public static Result ok(String msg) { return new Result(true, msg); }
         public static Result fail(String msg) { return new Result(false, msg); }
     }
     /** Callback für asynchrone Auth-Ergebnisse. */

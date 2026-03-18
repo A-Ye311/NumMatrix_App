@@ -82,7 +82,7 @@ public class StatsManager {
 
         if (seconds > 0) {
             total += seconds;
-            if (win && best == 0 || seconds < best){
+            if (win && (best == 0 || seconds < best)){
                 best = seconds;
             }
         }

@@ -10,7 +10,6 @@ import com.example.sudoku.auth.AuthManager;
 public class LauncherActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         // erstellt einen Zugriffspunkt auf Firebase Auth
         AuthManager auth = new AuthManager(this);
         if (auth.isLoggedIn()) {
             startActivity(new Intent(this, MainMenuActivity.class));

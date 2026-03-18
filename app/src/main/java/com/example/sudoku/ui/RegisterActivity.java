@@ -18,7 +18,7 @@ public class RegisterActivity extends Activity {
 
         AuthManager auth = new AuthManager(this);
 
-        //Layout
+
         setContentView(R.layout.activity_register);
 
         EditText email = findViewById(R.id.etEmail);
@@ -26,7 +26,7 @@ public class RegisterActivity extends Activity {
         EditText pw2 = findViewById(R.id.etPassword2);
         TextView error = findViewById(R.id.tvError);
 
-        //Button
+
         findViewById(R.id.btnDoRegister).setOnClickListener(v ->
                 auth.register(
                         email.getText().toString().trim(),
@@ -35,10 +35,16 @@ public class RegisterActivity extends Activity {
                         r -> {
                             if (!r.ok) {
                                 error.setText(r.message);
-                            } else {
-                                startActivity(new Intent(this, MainMenuActivity.class));
-                                finish();
+                                return;
                             }
+
+                            if (r.message != null && !r.message.isEmpty()) {
+                                error.setText(r.message);
+                                return;
+                            }
+
+                            startActivity(new Intent(this, MainMenuActivity.class));
+                            finish();
                         }
                 ));
     }

@@ -20,7 +20,7 @@ public class StartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // XML laden
+
         setContentView(R.layout.activity_start);
 
         loggedInInfo = findViewById(R.id.tvLoggedInInfo);
@@ -43,7 +43,7 @@ public class StartActivity extends Activity {
     private void updateLoginState() {
         AuthManager auth = new AuthManager(this);
         String email = auth.currentUserEmail();
-        //Bereits eingeloggte Nutzer müssen sich nicht erneut anmelden
+
         if (email != null) {
             loggedInInfo.setText(getString(R.string.logged_in_as, email));
             loggedInInfo.setVisibility(View.VISIBLE);

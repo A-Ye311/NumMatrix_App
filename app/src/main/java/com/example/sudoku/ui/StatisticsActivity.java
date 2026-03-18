@@ -49,9 +49,8 @@ public class StatisticsActivity extends Activity {
             return;
         }
 
-        long totalPlayed = 0;
+        long totalPlayed = rows.get(0).played;
         for (StatsManager.StatRow row : rows) {
-            totalPlayed += row.played;
 
             LinearLayout rowLayout = new LinearLayout(this);
             rowLayout.setOrientation(LinearLayout.HORIZONTAL);

@@ -51,17 +51,17 @@ public class GameActivity extends Activity {
         difficulty = getIntent().getStringExtra("difficulty");
         if (difficulty == null) difficulty = "EINFACH";
 
-        //Manager erstellen
         auth = new AuthManager(this);
+
         stats = new StatsManager();
-        //Spiel erstellen
+
         game = new SudokuGame(new SudokuGenerator().generate(difficulty));
-        //Views finden
+
         TextView diffView = findViewById(R.id.tvDifficulty);
         mistakesView = findViewById(R.id.tvMistakes);
         timerView = findViewById(R.id.tvTimer);
         GridLayout grid = findViewById(R.id.sudokuGrid);
-        //UI
+
         diffView.setText(getString(R.string.difficulty_label, difficulty));
         updateMistakes();
 
@@ -77,7 +77,7 @@ public class GameActivity extends Activity {
         for (int r = 0; r < GRID; r++) {
             for (int c = 0; c < GRID; c++) {
                 EditText cell = createCell(r, c);
-                // vorgegebene Felder sperren
+
                 int v = game.getCell(r, c);
                 if (v != 0) {
                     cell.setText(String.valueOf(v));

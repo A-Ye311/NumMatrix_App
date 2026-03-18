@@ -17,28 +17,28 @@ public class ResetRequestActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Layout
+
         setContentView(R.layout.activity_reset_request);
 
         EditText email = findViewById(R.id.etEmail);
         TextView msg = findViewById(R.id.tvMsg);
-        View sendButton = findViewById(R.id.btnSend); //Button
+        View sendButton = findViewById(R.id.btnSend);
         AuthManager authManager = new AuthManager(this);
 
         sendButton.setOnClickListener(v -> {
             String normalizedEmail = email.getText().toString().trim();
-            sendButton.setEnabled(false); //Button deaktivieren
+            sendButton.setEnabled(false);
             msg.setText("");
-            //Passwort-Reset starten
+
             authManager.resetPassword(normalizedEmail, result -> runOnUiThread(() -> {
                 sendButton.setEnabled(true);
                 if (!result.ok) {
                     msg.setText(result.message);
                     return;
                 }
-                //kleine Meldung
+
                 Toast.makeText(this, R.string.reset_email_sent, Toast.LENGTH_SHORT).show();
-                // Zurück zur Login-Seite
+
                 Intent intent = new Intent(this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);

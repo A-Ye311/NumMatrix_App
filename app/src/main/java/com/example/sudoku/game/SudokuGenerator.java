@@ -4,7 +4,8 @@ import java.util.Random;
 
 /**
  * Erstellt ein Sudoku-Puzzle in einer gewählten Schwierigkeit.
- * Die Lösung ist fest vorgegeben, es werden nur Felder entfernt.
+ * Dafür wird zuerst per Backtracking eine vollständige, zufällige Lösung erzeugt
+ * und danach werden abhängig von der Schwierigkeit einzelne Felder entfernt.
  */
 public class SudokuGenerator {
     private static final int SIZE = 9;
@@ -24,6 +25,7 @@ public class SudokuGenerator {
         public final int[][] puzzle;
         /** Vollständige Lösung des Rätsels. */
         public final int[][] solution;
+
         /** Speichert Puzzle und Lösung zusammen. */
         public Puzzle(int[][] puzzle, int[][] solution) {
             this.puzzle = puzzle;
@@ -33,8 +35,9 @@ public class SudokuGenerator {
 
     /**
      * Baut ein neues Puzzle für die gewünschte Schwierigkeit.
-    */
+     */
     public Puzzle generate(String difficulty) {
+        // Erzeugt zuerst ein vollständig ausgefülltes, zufällig generiertes Sudoku.
         int[][] sol = randomizedSolution();
         int[][] pz = deepCopy(sol);
         int remove = removedCellsForDifficulty(difficulty);
@@ -42,13 +45,20 @@ public class SudokuGenerator {
         removeCellsByBox(pz, remove);
         return new Puzzle(pz, sol);
     }
-
+    /**
+     * Erstellt ein komplettes Sudoku-Lösungsfeld in zufälliger Anordnung.
+     * Die Zufälligkeit entsteht dadurch, dass bei jedem Rekursionsschritt die
+     * Kandidatenzahlen 1 bis 9 neu gemischt ausprobiert werden.
+     */
     private int[][] randomizedSolution() {
         int[][] grid = new int[SIZE][SIZE];
         fillGrid(grid, 0);
         return grid;
     }
 
+    /**
+     * Füllt das Raster rekursiv Zelle für Zelle, bis eine gültige Lösung entstanden ist.
+     */
     private boolean fillGrid(int[][] grid, int cellIndex) {
         if (cellIndex == CELL_COUNT) {
             return true;
@@ -73,6 +83,9 @@ public class SudokuGenerator {
         return false;
     }
 
+    /**
+     * Prüft, ob ein Wert in Zeile, Spalte und 3x3-Box erlaubt ist.
+     */
     private boolean isValidPlacement(int[][] grid, int row, int col, int value) {
         for (int i = 0; i < SIZE; i++) {
             if (grid[row][i] == value || grid[i][col] == value) {
@@ -93,12 +106,18 @@ public class SudokuGenerator {
         return true;
     }
 
+    /**
+     * Gibt die Ziffern 1 bis 9 in zufälliger Reihenfolge zurück.
+     */
     private int[] shuffledDigits() {
-        int[] digits = {1,2,3,4,5,6,7,8,9};
+        int[] digits = {1, 2, 3, 4, 5, 6, 7, 8, 9};
         shuffleArray(digits);
         return digits;
     }
 
+    /**
+     * Zufällige Permutation von Arrays.
+     */
     private void shuffleArray(int[] values) {
         for (int i = values.length - 1; i > 0; i--) {
             int j = rnd.nextInt(i + 1);
@@ -107,6 +126,7 @@ public class SudokuGenerator {
             values[j] = temp;
         }
     }
+
     /**
      * Kopiert ein Sudoku-Feld, damit das Original gleich bleibt.
      */
@@ -117,6 +137,7 @@ public class SudokuGenerator {
         }
         return out;
     }
+
     /**
      * Legt fest, wie viele Felder je nach Schwierigkeit leer werden.
      */
@@ -133,6 +154,7 @@ public class SudokuGenerator {
                 return EASY_REMOVE;
         }
     }
+
     /**
      * Entfernt Felder möglichst gleichmäßig in allen 3x3-Boxen.
      */
@@ -145,6 +167,7 @@ public class SudokuGenerator {
             removeFromBox(puzzle, box, target);
         }
     }
+
     /**
      * Entfernt in einer bestimmten Box zufällig einige Werte.
      */
