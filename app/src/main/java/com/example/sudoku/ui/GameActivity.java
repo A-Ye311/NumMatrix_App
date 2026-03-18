@@ -97,6 +97,9 @@ public class GameActivity extends Activity {
         cell.setBackgroundResource(R.drawable.cell_border);
         cell.setTextSize(18);
         cell.setGravity(Gravity.CENTER);
+        cell.setTextAlignment(EditText.TEXT_ALIGNMENT_CENTER);
+        cell.setIncludeFontPadding(false);
+        cell.setPadding(0, 0, 0, 0);
         cell.setInputType(InputType.TYPE_CLASS_NUMBER);
         cell.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1)});
 
@@ -212,6 +215,11 @@ public class GameActivity extends Activity {
         int availableWidth = grid.getWidth() - grid.getPaddingLeft() - grid.getPaddingRight();
         int totalMargins = (4 * thick) + (14 * thin);
         int cellSize = (availableWidth - totalMargins) / 9;
+        int gridWidth = (cellSize * GRID) + totalMargins;
+
+        android.view.ViewGroup.LayoutParams gridParams = grid.getLayoutParams();
+        gridParams.width = gridWidth;
+        grid.setLayoutParams(gridParams);
 
         for (int r = 0; r < GRID; r++) {
             for (int c = 0; c < GRID; c++) {
